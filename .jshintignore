@@ -1,0 +1,5 @@
+node_modules/**/*.js
+node_modules/**/*.json
+doc/**/*.js
+doc/**/*.json
+**/*.min.js

@@ -1,0 +1,45 @@
+#!/bin/sh
+# A pre-commit hook for git jshint files before committing them
+# @see https://github.com/jshint/jshint/
+
+JSHINT_CMD='jshint'
+
+if which $JSHINT_CMD &> /dev/null; then
+    echo ""
+else
+    echo "$JSHINT_CMD not found. Commit aborted."
+    exit 1
+fi
+
+git stash -q --keep-index
+
+RESULT=0
+
+#for FILE in `(find-json.sh; find-js.sh)`; do
+for FILE in `git diff --cached --name-status --diff-filter=M`; do
+#    echo pre-commit - $FILE
+    case "$FILE" in
+        *.js)
+            $JSHINT_CMD "$FILE"
+            RESULT=$?
+            ;;
+        *.json | *Gruntfile.js | .jshint*)
+            $JSHINT_CMD "$FILE" --config .jshintrc-gruntfile
+            RESULT=$?
+            ;;
+        *)
+            RESULT=0
+            ;;
+    esac
+done
+
+git stash pop -q
+
+
+if [ $RESULT -ne 0 ]; then
+    echo ""
+    echo "JSHint detected syntax problems."
+    echo "Commit aborted."
+fi
+
+exit $RESULT

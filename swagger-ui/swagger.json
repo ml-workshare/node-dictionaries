@@ -1,0 +1,52 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "info": {
+        "title": "Location API",
+        "description": "Location API. This product includes GeoLite2 data created by MaxMind, available from <a href=\"http://www.maxmind.com\">http://www.maxmind.com</a>."
+    },
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+
+        "/api/countries/{hosts}": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Get country information for comma separated IP addresses",
+                "description": "Get country information for comma separated IP addresses",
+                "operationId": "getCountryInfoByHosts",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "hosts",
+                        "description": "IP address(es) or hosts to query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid parameter(s) supplied"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    }
+}

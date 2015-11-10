@@ -1,0 +1,63 @@
+{
+  "private": true,
+  "name": "node-dictionary",
+  "version": "1.0.0",
+  "description": "Workshare dictionary microservice in nodejs",
+  "main": "app.js",
+  "scripts": {
+    "test": "grunt coverage",
+    "start": "export NODE_ENV=production; forever start ./config/forever.prod.json",
+    "stop": "forever stop dictionarysvc-prod",
+    "restart": "forever restart dictionarysvc-prod",
+    "pretest": "grunt check",
+    "setup": "ln -s ../../config/pre-commit .git/hooks/pre-commit",
+    "serve": "export NODE_ENV=development; nodemon --watch app.js --watch app/ --delay 1 --verbose",
+    "debug": "export NODE_ENV=development; DEBUG=* nodemon --watch app.js --watch app/ --delay 1 --verbose",
+    "covereach": "for plan in `find test/app/ -name *.spec.js`; do echo === $plan ===================================; rm -rf doc/coverage/*; grunt coverage --plan $plan; done",
+    "coverage-view": "chromium-browser doc/coverage/index.html",
+    "edit": "subl Gruntfile.js app.js package.json README.md `find app/ test/ config/ swagger-ui/ -type f`",
+    "performance": "siege --internet --file test/urls.lst --concurrent 100 --time 1M"
+  },
+  "author": "Brent Cowgill",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/workshare/node-dictionary"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "chalk": "^1.1.1",
+    "config": "^1.16.0",
+    "country-data": "0.0.23",
+    "debug": "^2.2.0",
+    "express": "^4.13.3",
+    "forever": "^0.15.1",
+    "log4js": "^0.6.27",
+    "mkdirp": "^0.5.1",
+    "swagger-ui": "^2.1.3",
+    "swagger-ui-middleware": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-jsdoc": "~0.5.6",
+    "grunt-mocha-chai-sinon": "0.0.8",
+    "grunt-mocha-istanbul": "^3.0.1",
+    "istanbul": "^0.3.20",
+    "jsdoc": "^3.3.0-alpha8",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "^2.3.2",
+    "node-mocks-http": "^1.5.0",
+    "nodemon": "^1.6.1",
+    "sinon": "^1.16.1",
+    "sinon-as-promised": "^4.0.0",
+    "sinon-chai": "^2.8.0",
+    "supertest": "^1.1.0",
+    "underscore": "^1.8.3"
+  }
+}

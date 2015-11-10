@@ -1,0 +1,17 @@
+.gitignore
+.idea
+test
+doc
+docs
+log
+logs
+scripts
+Makefile
+Gruntfile.js
+.jshint*
+jsdoc.conf.json
+*.log
+*.txt
+*.bak
+*.sublime-*
+*.timestamp

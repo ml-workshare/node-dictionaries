@@ -1,0 +1,13 @@
+{
+	"comment": "default configuration always loaded",
+	"log4js": {
+		"appenders": [{
+			"type": "console",
+			"layout": {
+				"type": "pattern",
+				"pattern": "[%d{ABSOLUTE}] %[%-5p %10c%] - %m"
+			}
+		}],
+		"replaceConsole": true
+	}
+}

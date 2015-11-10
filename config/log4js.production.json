@@ -1,0 +1,20 @@
+{
+  "appenders": [
+    {
+      "type": "dateFile",
+      "filename": "access.log",
+      "pattern": "-yyyy-MM-dd",
+      "category": "http"
+    },
+    {
+      "type": "logLevelFilter",
+      "level": "INFO",
+      "appender": {
+        "type": "file",
+        "filename": "errors.log",
+        "maxLogSize": 10485760,
+        "numBackups": 3
+      }
+    }
+  ]
+}

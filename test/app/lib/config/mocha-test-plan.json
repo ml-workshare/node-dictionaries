@@ -1,0 +1,34 @@
+{
+    "commenta": "configure log setup when running the test plans",
+    "log4js": {
+        "appenders": [
+            {
+                "type": "file",
+                "filename": "log/test-run.log",
+                "maxLogSize": 100000,
+                "backups": 1
+            }
+        ],
+        "levels": {
+            "[all]": "DEBUG"
+        },
+        "replaceConsole": false
+    },
+
+    "commentb": "this turns off visible display of logs when you want to hide the console output your system under test makes",
+    "off": {
+        "appenders": [
+            {
+                "type": "file",
+                "filename": "log/test-run.log",
+                "maxLogSize": 100000,
+                "backups": 1
+            }
+        ],
+        "levels": {
+            "[all]": "DEBUG"
+        },
+        "replaceConsole": true
+    }
+
+}

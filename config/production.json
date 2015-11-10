@@ -1,0 +1,13 @@
+{
+	"comment": "live environment configuration for location service",
+	"port": 19001,
+	"log4js": {
+		"configureFile": {
+			"fileName": "config/log4js.production.json",
+			"options": {
+				"reloadSecs": 60,
+				"cwd": "/tmp/logs"
+			}
+		}
+	}
+}

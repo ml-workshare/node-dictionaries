@@ -1,0 +1,8 @@
+// forever.prod.json
+{
+    "uid": "dictionarysvc-prod",
+    "append": true,
+    "watch": false,
+    "script": "app.js",
+    "sourceDir": "."
+}

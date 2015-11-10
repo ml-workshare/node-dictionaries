@@ -1,0 +1,73 @@
+// HealthCheckAPI.js API handles the health check endpoint by performing an actual IP lookup.
+
+'use strict';
+
+var category = 'HealthCheckAPI',
+    logger = require('./lib/config-log4js').getLogger(category),
+    config = require('config'),
+    debug = require('debug')(category),
+    defaults = {
+        checkIp: '8.8.8.8',
+        iso2CountryCode: 'US'
+    };
+
+config.util.setModuleDefaults(category, defaults);
+
+class HealthCheckAPI {
+    constructor(locationFinder) {
+        var self = this;
+        debug('constructor()', locationFinder);
+
+        this.locationFinder = locationFinder || new LocationFinder();
+
+        Object.keys(defaults).forEach(function (key) {
+            self[key] = config.get(category + '.' + key);
+        });
+    }
+
+    get(request, response, next) {
+        var self = this;
+        debug('get()', request.method, request.url);
+        var healthy = false;
+
+        response.status(healthy ? 200 : 500);
+
+        response.json({
+            'database': {
+                'healthy': healthy
+            }
+        });
+        next();
+
+        /*
+        self.locationFinder
+            .willLookup([self.checkIp])
+            .then(function(entries){
+                debug('then()', entries);
+                lookups = entries;
+                healthy = (lookups[0].country.iso_code === self.iso2CountryCode);
+                if (!healthy) {
+                    logger.error(process.pid + ' lookup wrong ' + self.checkIp + ' should be ' +
+                        self.iso2CountryCode + ' but got:', lookups[0]);
+                }
+
+                response.status(healthy ? 200 : 500);
+
+                response.json({
+                    'database': {
+                        'healthy': healthy
+                    }
+                });
+                next();
+            })
+            .catch(function (error) {
+                debug('catch() impossible', error);
+                logger.error(process.pid + ' ' + error);
+                next(error);
+        });
+        */
+    }
+}
+
+module.exports = HealthCheckAPI;
+debug('exports', module.exports);

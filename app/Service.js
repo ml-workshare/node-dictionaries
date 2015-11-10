@@ -7,16 +7,16 @@ var category = 'Service',
     path = require('path'),
     http = require('http'),
     express = require('express'),
-//    VersionAPI = require('./VersionAPI'),
-//    HealthCheckAPI = require('./HealthCheckAPI'),
+    VersionAPI = require('./VersionAPI'),
+    HealthCheckAPI = require('./HealthCheckAPI'),
     swaggerUiMiddleware = require('swagger-ui-middleware');
 
 class Service {
     constructor(apis) {
         debug('constructor()');
         this.apis = apis || {};
-//        this._initAPI('healthCheckAPI', HealthCheckAPI);
-//        this._initAPI('versionAPI', VersionAPI);
+        this._initAPI('healthCheckAPI', HealthCheckAPI);
+        this._initAPI('versionAPI', VersionAPI);
     }
 
     _initAPI(name, APIClass) {
@@ -25,8 +25,8 @@ class Service {
 
     start(port) {
         var app = express(),
-//            healthCheckAPI = this.healthCheckAPI,
-//            versionAPI = this.versionAPI,
+            healthCheckAPI = this.healthCheckAPI,
+            versionAPI = this.versionAPI,
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
         debug('start()');
@@ -48,6 +48,7 @@ class Service {
         app.get('/api/countries(?:\.json)?/:hosts', function(request, response) {
             locationAPI.get(request, response);
         });
+        */
         app.get('/admin/healthCheck', function(request, response) {
             healthCheckAPI.get(request, response);
         });
@@ -55,7 +56,6 @@ class Service {
         app.get('/admin/version', function(request, response) {
             versionAPI.get(request, response);
         });
-         */
 
         var server = http.createServer(app);
         server.listen(port, function() {

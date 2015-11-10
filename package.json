@@ -33,6 +33,7 @@
     "forever": "^0.15.1",
     "log4js": "^0.6.27",
     "mkdirp": "^0.5.1",
+    "monk": "^1.0.1",
     "swagger-ui": "^2.1.3",
     "swagger-ui-middleware": "^1.0.0"
   },

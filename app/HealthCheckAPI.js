@@ -10,15 +10,13 @@ var category = 'HealthCheckAPI',
         checkIp: '8.8.8.8',
         iso2CountryCode: 'US'
     };
-
+void logger;
 config.util.setModuleDefaults(category, defaults);
 
 class HealthCheckAPI {
-    constructor(locationFinder) {
+    constructor() {
         var self = this;
-        debug('constructor()', locationFinder);
-
-        this.locationFinder = locationFinder || new LocationFinder();
+        debug('constructor()');
 
         Object.keys(defaults).forEach(function (key) {
             self[key] = config.get(category + '.' + key);
@@ -26,7 +24,6 @@ class HealthCheckAPI {
     }
 
     get(request, response, next) {
-        var self = this;
         debug('get()', request.method, request.url);
         var healthy = false;
 

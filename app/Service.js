@@ -20,7 +20,9 @@ class Service {
     }
 
     _initAPI(name, APIClass) {
-        this[name] = this.apis[name] ? this.apis[name] : new APIClass();
+        this[name] = this.apis[name]
+            ? this.apis[name]
+            : new APIClass();
     }
 
     start(port) {

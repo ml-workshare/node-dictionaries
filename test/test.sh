@@ -1,8 +1,11 @@
+#!/bin/bash
+# ./test.sh | tee results.log
+
 COOKIE=qa_session_id=f86ae43bb99a205f5ff08ce26dced54f
 
 BASE=https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries
 PRETTY=cat
-#PRETTY=prettydiff.sh
+PRETTY=prettydiff.sh
 OUT=get.out
 
 echo " "
@@ -44,6 +47,20 @@ N=TEST_OTHER
 Q="$BASE/$N.json"
 echo PUT $N $Q
 curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"type": "weird", "payload": true, "enabled": true, "cuteness": -12}' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_NONOBJECT
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d 'the thing is not an object' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_ARRAY
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '[{"name": "GOTCHA", "payload": true, "enabled": false, "cuteness": 42}]' -X PUT "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
 
 echo " "

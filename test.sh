@@ -5,6 +5,18 @@ PRETTY=cat
 PRETTY=prettydiff.sh
 OUT=get.out
 
+echo "HEALTH ======================================="
+Q="https://qa.workshare.com/dictionaries/admin/healthcheck"
+echo GET $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo "VERSION ======================================"
+Q="https://qa.workshare.com/dictionaries/admin/version"
+echo GET $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
 echo "PUT ========================================="
 N=TEST_DICTIONARY
 Q="$BASE/$N.json"

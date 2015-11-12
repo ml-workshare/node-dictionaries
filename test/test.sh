@@ -28,6 +28,18 @@ curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
 
 echo " "
+echo "RESET ======================================="
+
+for N in TEST_DICTIONARY TEST_OTHER TEST_NONOBJECT TEST_ARRAY TEST_DELETE
+do
+    Q="$BASE/$N.json"
+    echo DELETE $N
+    curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > /dev/null 2> /dev/null
+    curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" 2> /dev/null
+    echo " "
+done
+
+echo " "
 echo "PUT ========================================="
 N=TEST_DICTIONARY
 Q="$BASE/$N.json"

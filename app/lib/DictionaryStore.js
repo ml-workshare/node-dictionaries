@@ -30,7 +30,7 @@ class DictionaryStore {
                 }
                 mockDB[self.scope][self.uuid][name] = value;
 
-                fulfill('WHAT SHOULD I RETURN? ' + value);
+                fulfill(value);
             });
 
         });

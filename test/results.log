@@ -24,6 +24,18 @@ Build tag = jenkins - dictionaries - 101
 Git commit = 435e c07265536d43c62040a21069f103b499d0de
 Version = 1.0 .1 - 101
  
+RESET =======================================
+DELETE TEST_DICTIONARY
+Not Found 
+DELETE TEST_OTHER
+Not Found 
+DELETE TEST_NONOBJECT
+Not Found 
+DELETE TEST_ARRAY
+Not Found 
+DELETE TEST_DELETE
+Not Found 
+ 
 PUT =========================================
 PUT TEST_DICTIONARY https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DICTIONARY.json
 {
@@ -53,7 +65,7 @@ PUT TEST_OTHER https://qa.workshare.com/dictionaries/api/v1.0/users/current/dict
  
 PUT TEST_NONOBJECT https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_NONOBJECT.json
 {
-	"error": "unexpected token at 'then thing is not an object'";
+	"error": "unexpected token at 'the thing is not an object'";
 }
  
 PUT TEST_ARRAY https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_ARRAY.json
@@ -102,45 +114,30 @@ GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.js
 		"name"    : "GOTCHA",
 		"payload" : true
 	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
 		"document-preview-2-dot-0": true,
 		"full-page-layout"        : false,
 		"name"                    : "canary",
 		"new-files-and-folders"   : false
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
 	}, {
 		"added"   : "this",
 		"cuteness": -12,
@@ -148,6 +145,71 @@ GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.js
 		"name"    : "TEST_OTHER",
 		"payload" : true,
 		"type"    : "weird"
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
 	}, {
 		"cuteness": 42,
 		"enabled" : false,

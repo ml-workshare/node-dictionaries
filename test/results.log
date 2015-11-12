@@ -1,0 +1,140 @@
+SWAGGER ======================================
+https://qa.workshare.com/dictionaries/swagger-ui/index.html#
+
+HEALTH =======================================
+GET https://qa.workshare.com/dictionaries/admin/healthcheck
+{
+	"health.cirrus_users_client": {
+		"healthy": true
+	},
+	"health.db_connection"      : {
+		"healthy": true
+	}
+}
+
+VERSION ======================================
+GET https://qa.workshare.com/dictionaries/admin/version
+Application Name = Dictionaries
+Build Time = 2015 - 10 - 13 16 : 12
+Builder Number = 101
+Build Id = 101
+Job name = dictionaries
+Build tag = jenkins - dictionaries - 101
+Git commit = 435e c07265536d43c62040a21069f103b499d0de
+Version = 1.0 .1 - 101
+
+PUT =========================================
+PUT TEST_DICTIONARY https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DICTIONARY.json
+{
+	"cuteness": 42,
+	"enabled" : false,
+	"name"    : "GOTCHA",
+	"payload" : true
+}
+ 
+PUT TEST_OTHER https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_OTHER.json
+{
+	"added"   : "this",
+	"cuteness": -12,
+	"enabled" : true,
+	"name"    : "TEST_OTHER",
+	"type"    : "weirdulator"
+}
+ 
+PUT TEST_OTHER https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_OTHER.json
+{
+	"cuteness": -12,
+	"enabled" : true,
+	"name"    : "TEST_OTHER",
+	"payload" : true,
+	"type"    : "weird"
+}
+ 
+PUT TEST_DELETE https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DELETE.json
+{
+	"cuteness": 42,
+	"enabled" : false,
+	"name"    : "GOTCHA",
+	"payload" : true
+}
+ 
+DELETE =========================================
+DELETE TEST_DELETE https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DELETE.json
+Not Found
+ 
+GET =========================================
+GET TEST_DELETE https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DELETE.json
+Not Found
+ 
+GET TEST_DICTIONARY https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DICTIONARY.json
+Not Found
+ 
+GET TEST_OTHER https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_OTHER.json
+{
+	"added"   : "this",
+	"cuteness": -12,
+	"enabled" : true,
+	"name"    : "TEST_OTHER",
+	"payload" : true,
+	"type"    : "weird"
+}
+ 
+GET ALL ====================================
+GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.json
+[
+	{
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"document-preview-2-dot-0": true,
+		"full-page-layout"        : false,
+		"name"                    : "canary",
+		"new-files-and-folders"   : false
+	}, {
+		"added"   : "this",
+		"cuteness": -12,
+		"enabled" : true,
+		"name"    : "TEST_OTHER",
+		"payload" : true,
+		"type"    : "weird"
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}
+]
+ 
+GET FILTER =================================
+GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.json?filters%5Bpayload%5D=true&filters%5Benabled%5D=true
+[{
+		"added"   : "this",
+		"cuteness": -12,
+		"enabled" : true,
+		"name"    : "TEST_OTHER",
+		"payload" : true,
+		"type"    : "weird"
+	}
+]

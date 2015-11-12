@@ -6,7 +6,7 @@ Install a recent version of [Node.js and Node package manager (npm)](http://node
 
 Install nvm and then install node version 4.2.1 or newer for ECMA6 support. (https://github.com/creationix/nvm)
 
-    cat v4.2.1 > ~/.nvmrc
+    echo v4.2.1 > ~/.nvmrc
     nvm install v4.2.1
     nvm use v4.2.1
 

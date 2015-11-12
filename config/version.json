@@ -1,0 +1,8 @@
+{
+	"buildTime": "fake-buildtime",
+	"builderNumber": "fake-buildnumber",
+	"buildId": "fake-buildid",
+	"jobName": "fake-jobname",
+	"buildTag": "fake-tag",
+	"gitCommit": "fake-committed"
+}

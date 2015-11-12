@@ -1,35 +1,76 @@
-COOKIE=qa_session_id=e8e19423e9431b691e24841d70c3786c
+COOKIE=qa_session_id=f86ae43bb99a205f5ff08ce26dced54f
 
-Q='/dictionaries/api/v1.0/users/current/dictionaries/XXXXX.json'
-echo PUT $Q
-curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"key":{"value": [1,2,3]}}' -X PUT "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-#curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"key":"value"}' -X PUT "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
+BASE=https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries
+PRETTY=cat
+PRETTY=prettydiff.sh
+OUT=get.out
 
+echo "PUT ========================================="
+N=TEST_DICTIONARY
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"name": "GOTCHA", "payload": true, "enabled": false, "cuteness": 42}' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_OTHER
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"type": "weirdulator", "enabled": true, "cuteness": -12, "added": "this"}' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_OTHER
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"type": "weird", "payload": true, "enabled": true, "cuteness": -12}' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_DELETE
+Q="$BASE/$N.json"
+echo PUT $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"name": "GOTCHA", "payload": true, "enabled": false, "cuteness": 42}' -X PUT "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+echo "DELETE ========================================="
+Q="$BASE/$N.json"
+echo DELETE $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+echo "GET ========================================="
+Q="$BASE/$N.json"
+echo GET $N $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_DICTIONARY
+Q="$BASE/$N.json"
+echo GET $N $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=TEST_OTHER
+Q="$BASE/$N.json"
+echo GET $N $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+echo "GET ALL ===================================="
+Q="$BASE.json"
 echo GET $Q
-curl -H "Cookie: $COOKIE;" "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
 
-Q='/dictionaries/api/v1.0/users/current/dictionaries.json'
+echo " "
+echo "GET FILTER ================================="
+Q="$BASE.json?filters%5Bpayload%5D=true&filters%5Benabled%5D=true"
 echo GET $Q
-curl -H "Cookie: $COOKIE;" "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
-
-Q='/dictionaries/api/v1.0/users/current/dictionaries.json?filters%5Bvisited%5D=true'
-echo GET $Q
-curl -H "Cookie: $COOKIE;" "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
-
-Q='/dictionaries/api/v1.0/users/current/dictionaries/NOTFOUND.json'
-echo GET $Q
-curl -H "Cookie: $COOKIE;" "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
-
-Q='/dictionaries/api/v1.0/users/current/dictionaries/XXXXX.json'
-echo DELETE $Q
-curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
-
-echo GET $Q
-curl -H "Cookie: $COOKIE;" "https://qa.workshare.com/$Q" > get.json 2> /dev/null
-prettydiff.sh get.json
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT

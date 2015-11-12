@@ -2,7 +2,7 @@ COOKIE=qa_session_id=f86ae43bb99a205f5ff08ce26dced54f
 
 BASE=https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries
 PRETTY=cat
-PRETTY=prettydiff.sh
+#PRETTY=prettydiff.sh
 OUT=get.out
 
 echo "HEALTH ======================================="
@@ -86,3 +86,5 @@ Q="$BASE.json?filters%5Bpayload%5D=true&filters%5Benabled%5D=true"
 echo GET $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
+
+rm get.out

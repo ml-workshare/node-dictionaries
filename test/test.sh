@@ -1,7 +1,7 @@
 #!/bin/bash
 # ./test.sh | tee results.log
 
-COOKIE=qa_session_id=f86ae43bb99a205f5ff08ce26dced54f
+COOKIE=qa_session_id=fcd236c8a11e7a73abee8d37e2eedcfc
 
 BASE=https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries
 PRETTY=cat
@@ -30,7 +30,7 @@ $PRETTY $OUT
 echo " "
 echo "RESET ======================================="
 
-for N in TEST_DICTIONARY TEST_OTHER TEST_NONOBJECT TEST_ARRAY TEST_DELETE
+for N in TEST_DICTIONARY TEST_OTHER TEST_NONOBJECT TEST_ARRAY TEST_DELETE GOTCHA
 do
     Q="$BASE/$N.json"
     echo DELETE $N
@@ -38,6 +38,13 @@ do
     curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" 2> /dev/null
     echo " "
 done
+
+echo " "
+echo "DENIED ======================================"
+Q="$BASE/$N.json"
+echo GET $N $Q
+curl -H "Cookie: qa_session=plugh;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
 
 echo " "
 echo "PUT ========================================="
@@ -105,6 +112,13 @@ $PRETTY $OUT
 
 echo " "
 N=TEST_OTHER
+Q="$BASE/$N.json"
+echo GET $N $Q
+curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
+echo " "
+N=GOTCHA
 Q="$BASE/$N.json"
 echo GET $N $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null

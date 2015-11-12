@@ -35,6 +35,15 @@ DELETE TEST_ARRAY
 Not Found 
 DELETE TEST_DELETE
 Not Found 
+DELETE GOTCHA
+{"name":"GOTCHA","payload":true,"enabled":false,"cuteness":42} 
+ 
+DENIED ======================================
+GET GOTCHA https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/GOTCHA.json
+{
+	"error_code": "not_logged_in",
+	"error_msg" : "Not logged in"
+}
  
 PUT =========================================
 PUT TEST_DICTIONARY https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/TEST_DICTIONARY.json
@@ -100,24 +109,117 @@ GET TEST_OTHER https://qa.workshare.com/dictionaries/api/v1.0/users/current/dict
 	"type"    : "weird"
 }
  
+GET GOTCHA https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries/GOTCHA.json
+{
+	"cuteness": 42,
+	"enabled" : false,
+	"name"    : "GOTCHA",
+	"payload" : true
+}
+ 
 GET ALL ====================================
 GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.json
 [
 	{
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
 		"document-preview-2-dot-0": true,
 		"full-page-layout"        : false,
 		"name"                    : "canary",
 		"new-files-and-folders"   : false
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
 	}, {
 		"cuteness": 42,
 		"enabled" : false,
@@ -145,91 +247,6 @@ GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.js
 		"name"    : "TEST_OTHER",
 		"payload" : true,
 		"type"    : "weird"
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
 	}, {
 		"cuteness": 42,
 		"enabled" : false,

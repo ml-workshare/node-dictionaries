@@ -113,6 +113,7 @@ describe('DictionaryStore', function () {
                     'TEST_DELETE'
                 );
 
+            
             promise.then(function (result) {
                 testAsync(asyncDone, function () {
                     expect(JSON.parse(result))

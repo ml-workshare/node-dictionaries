@@ -74,19 +74,32 @@ class DictionaryStore {
     willGet(name) {
         debug('willGet()', name);
         var self = this;
-        return new Promise(function (fulfill) {
+        return new Promise(function (fulfill, reject) {
 
             process.nextTick(function () {
+                /* jshint maxcomplexity: 5 */
+                var value = true;
+
                 if (!(self.scope in mockDB))
                 {
-                    mockDB[self.scope] = {};
+                    value = false;
                 }
-                if (!(self.uuid in mockDB[self.scope]))
+                if (value && !(self.uuid in mockDB[self.scope]))
                 {
-                    mockDB[self.scope][self.uuid] = {};
+                    value = false;
                 }
+                if (value && !(name in mockDB[self.scope][self.uuid]))
+                {
+                    value = false;
+                }
+                if (!value) {
+                    reject('Not Found');
+                }
+                else {
+                    value = mockDB[self.scope][self.uuid][name];
 
-                fulfill('WHAT SHOULD I RETURN? ' + mockDB[self.scope][self.uuid][name]);
+                    fulfill(value);
+                }
             });
 
         });

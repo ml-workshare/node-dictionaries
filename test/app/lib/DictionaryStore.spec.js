@@ -127,7 +127,6 @@ describe('DictionaryStore', function () {
                 .catch(function (reason) {
                     asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-
         });
 
         it('should reject promise when dictionary not present', function (asyncDone) {
@@ -144,54 +143,68 @@ describe('DictionaryStore', function () {
                             .to.be.deep.equal('Not Found');
                     });
                 });
-
         });
     });
 
     describe('willGet', function () {
-        test('should promise to get a dictionary value', function (asyncDone) {
-            var RESULT = {},
+        it('should promise to get a dictionary value', function (asyncDone) {
+            var RESULT = {
+                    name: 'GOTCHA',
+                    payload: true,
+                    enabled: false,
+                    cuteness: 42
+                },
                 promise = this.dictionary.willGet(
                     'TEST_DICTIONARY'
                 );
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
+                    testAsync(asyncDone, function () {
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
 
-        test('should promise to get a modified dictionary value', function (asyncDone) {
-            var RESULT = {},
+        it('should promise to get a modified dictionary value', function (asyncDone) {
+            var RESULT = {
+                    type: 'weirdulator',
+                    enabled: true,
+                    cuteness: -12,
+                    added: 'this'
+                },
                 promise = this.dictionary.willGet(
                     'TEST_OTHER'
                 );
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
+                    testAsync(asyncDone, function () {
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
 
-        test('should promise to get a dictionary value that was deleted', function (asyncDone) {
-            var RESULT = {},
-                promise = this.dictionary.willGet(
+        it('should promise to get a dictionary value that was deleted', function (asyncDone) {
+            var promise = this.dictionary.willGet(
                     'TEST_DELETE'
                 );
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
+                    asyncDone(new Error('FAIL should not fulfill ' + result));
+                })
+                .catch(function (reason) {
+                    testAsync(asyncDone, function () {
+                        expect(reason)
+                            .to.be.deep.equal('Not Found');
+                    });
                 });
-            });
-
         });
     });
 

@@ -26,6 +26,12 @@ describe('DictionaryStore', function () {
                     enabled: false,
                     cuteness: 42
                 },
+                RESULT = {
+                    name: 'TEST_DICTIONARY',
+                    payload: true,
+                    enabled: false,
+                    cuteness: 42
+                },
                 promise = this.dictionary.willSet(
                     'TEST_DICTIONARY',
                     JSON.stringify(DATA)
@@ -33,15 +39,24 @@ describe('DictionaryStore', function () {
 
             promise.then(function (result) {
                 testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(DATA);
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
 
         it('should promise to set another dictionary value', function (asyncDone) {
             var DATA = {
+                    type: 'weird',
+                    payload: true,
+                    enabled: true,
+                    cuteness: -12
+                },
+                RESULT = {
+                    name: 'TEST_OTHER',
                     type: 'weird',
                     payload: true,
                     enabled: true,
@@ -54,16 +69,25 @@ describe('DictionaryStore', function () {
 
             promise.then(function (result) {
                 testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(DATA);
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
 
         it('should promise to set another value again, add, remove, ' +
             'change keys', function (asyncDone) {
             var DATA = {
+                    type: 'weirdulator',
+                    enabled: true,
+                    cuteness: -12,
+                    added: 'this'
+                },
+                RESULT = {
+                    name: 'TEST_OTHER',
                     type: 'weirdulator',
                     enabled: true,
                     cuteness: -12,
@@ -75,17 +99,25 @@ describe('DictionaryStore', function () {
                 );
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(DATA);
+                    testAsync(asyncDone, function () {
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
 
         it('should promise to set a dictionary value to be deleted', function (asyncDone) {
             var DATA = {
                     name: 'GOTCHA',
+                    payload: true,
+                    enabled: false,
+                    cuteness: 42
+                },
+                RESULT = {
+                    name: 'TEST_DELETE',
                     payload: true,
                     enabled: false,
                     cuteness: 42
@@ -96,20 +128,21 @@ describe('DictionaryStore', function () {
                 );
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(DATA);
+                    testAsync(asyncDone, function () {
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(RESULT);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
-
         });
-
     });
 
     describe('willDelete', function () {
         it('should promise to delete a dictionary value', function (asyncDone) {
-            var DATA = {
-                    name: 'GOTCHA',
+            var RESULT = {
+                    name: 'TEST_DELETE',
                     payload: true,
                     enabled: false,
                     cuteness: 42
@@ -121,7 +154,7 @@ describe('DictionaryStore', function () {
             promise.then(function (result) {
                     testAsync(asyncDone, function () {
                         expect(JSON.parse(result))
-                            .to.be.deep.equal(DATA);
+                            .to.be.deep.equal(RESULT);
                     });
                 })
                 .catch(function (reason) {
@@ -149,7 +182,7 @@ describe('DictionaryStore', function () {
     describe('willGet', function () {
         it('should promise to get a dictionary value', function (asyncDone) {
             var RESULT = {
-                    name: 'GOTCHA',
+                    name: 'TEST_DICTIONARY',
                     payload: true,
                     enabled: false,
                     cuteness: 42
@@ -171,6 +204,7 @@ describe('DictionaryStore', function () {
 
         it('should promise to get a modified dictionary value', function (asyncDone) {
             var RESULT = {
+                    name: 'TEST_OTHER',
                     type: 'weirdulator',
                     enabled: true,
                     cuteness: -12,
@@ -209,17 +243,41 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection', function () {
-        test('should promise to get the whole collection', function (asyncDone) {
-            var RESULT = {},
+        var sorter = function (before, after) {
+            /* jshint maxcomplexity: 3 */
+            return (before.name || '').localeCompare(
+                (after.name || ''),
+                'en',
+                {'sensitivity': 'base'}
+            );
+        };
+
+        it('should promise to get the whole collection', function (asyncDone) {
+            var RESULT = [{
+                    name: 'TEST_OTHER',
+                    type: 'weirdulator',
+                    enabled: true,
+                    cuteness: -12,
+                    added: 'this'
+                },{
+                    name: 'TEST_DICTIONARY',
+                    payload: true,
+                    enabled: false,
+                    cuteness: 42
+                }],
                 promise = this.dictionary.willGetCollection();
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
-                });
-            });
+                    testAsync(asyncDone, function () {
+                        var sorted = JSON.parse(result).sort(sorter);
 
+                        expect(sorted)
+                            .to.be.deep.equal(RESULT.sort(sorter));
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
+                });
         });
 
         test('should promise to get a filtered collection', function (asyncDone) {
@@ -230,12 +288,19 @@ describe('DictionaryStore', function () {
                 });
 
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
-                });
-            });
 
+                    testAsync(asyncDone, function () {
+                        var sorted = JSON.parse(result).sort(sorter);
+
+                        console.log(sorted);
+
+                        expect(sorted)
+                            .to.be.deep.equal(RESULT.sort(sorter));
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
+                });
         });
     });
 });

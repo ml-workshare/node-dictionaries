@@ -17,20 +17,27 @@ class DictionaryStore {
     willSet(name, value) {
         debug('willSet()', name, value);
         var self = this;
-        return new Promise(function (fulfill) {
-
+        return new Promise(function (fulfill, reject) {
             process.nextTick(function () {
-                if (!(self.scope in mockDB))
-                {
-                    mockDB[self.scope] = {};
-                }
-                if (!(self.uuid in mockDB[self.scope]))
-                {
-                    mockDB[self.scope][self.uuid] = {};
-                }
-                mockDB[self.scope][self.uuid][name] = value;
+                try {
+                    if (!(self.scope in mockDB))
+                    {
+                        mockDB[self.scope] = {};
+                    }
+                    if (!(self.uuid in mockDB[self.scope]))
+                    {
+                        mockDB[self.scope][self.uuid] = {};
+                    }
+                    value = JSON.parse(value);
+                    value.name = name;
+                    value = JSON.stringify(value);
+                    mockDB[self.scope][self.uuid][name] = value;
 
-                fulfill(value);
+                    fulfill(value);
+                }
+                catch (error) {
+                    reject(error);
+                }
             });
 
         });
@@ -42,29 +49,34 @@ class DictionaryStore {
         return new Promise(function (fulfill, reject) {
 
             process.nextTick(function () {
-                /* jshint maxcomplexity: 5 */
-                var value = true;
+                /* jshint maxcomplexity: 6 */
+                try {
+                    var value = true;
 
-                if (!(self.scope in mockDB))
-                {
-                    value = false;
-                }
-                if (value && !(self.uuid in mockDB[self.scope]))
-                {
-                    value = false;
-                }
-                if (value && !(name in mockDB[self.scope][self.uuid]))
-                {
-                    value = false;
-                }
-                if (!value) {
-                    reject('Not Found');
-                }
-                else {
-                    value = mockDB[self.scope][self.uuid][name];
-                    delete mockDB[self.scope][self.uuid][name];
+                    if (!(self.scope in mockDB))
+                    {
+                        value = false;
+                    }
+                    if (value && !(self.uuid in mockDB[self.scope]))
+                    {
+                        value = false;
+                    }
+                    if (value && !(name in mockDB[self.scope][self.uuid]))
+                    {
+                        value = false;
+                    }
+                    if (!value) {
+                        reject('Not Found');
+                    }
+                    else {
+                        value = mockDB[self.scope][self.uuid][name];
+                        delete mockDB[self.scope][self.uuid][name];
 
-                    fulfill(value);
+                        fulfill(value);
+                    }
+                }
+                catch (error) {
+                    reject(error);
                 }
             });
 
@@ -77,28 +89,33 @@ class DictionaryStore {
         return new Promise(function (fulfill, reject) {
 
             process.nextTick(function () {
-                /* jshint maxcomplexity: 5 */
-                var value = true;
+                /* jshint maxcomplexity: 6 */
+                try {
+                    var value = true;
 
-                if (!(self.scope in mockDB))
-                {
-                    value = false;
-                }
-                if (value && !(self.uuid in mockDB[self.scope]))
-                {
-                    value = false;
-                }
-                if (value && !(name in mockDB[self.scope][self.uuid]))
-                {
-                    value = false;
-                }
-                if (!value) {
-                    reject('Not Found');
-                }
-                else {
-                    value = mockDB[self.scope][self.uuid][name];
+                    if (!(self.scope in mockDB))
+                    {
+                        value = false;
+                    }
+                    if (value && !(self.uuid in mockDB[self.scope]))
+                    {
+                        value = false;
+                    }
+                    if (value && !(name in mockDB[self.scope][self.uuid]))
+                    {
+                        value = false;
+                    }
+                    if (!value) {
+                        reject('Not Found');
+                    }
+                    else {
+                        value = mockDB[self.scope][self.uuid][name];
 
-                    fulfill(value);
+                        fulfill(value);
+                    }
+                }
+                catch (error) {
+                    reject(error);
                 }
             });
 
@@ -108,19 +125,39 @@ class DictionaryStore {
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
         var self = this;
-        return new Promise(function (fulfill) {
+        return new Promise(function (fulfill, reject) {
 
             process.nextTick(function () {
-                if (!(self.scope in mockDB))
-                {
-                    mockDB[self.scope] = {};
-                }
-                if (!(self.uuid in mockDB[self.scope]))
-                {
-                    mockDB[self.scope][self.uuid] = {};
-                }
+                /* jshint maxcomplexity: 5 */
+                try {
+                    var value = true;
 
-                fulfill('WHAT SHOULD I RETURN? ' + JSON.stringify(mockDB[self.scope][self.uuid]));
+                    if (!(self.scope in mockDB))
+                    {
+                        value = false;
+                    }
+                    if (value && !(self.uuid in mockDB[self.scope]))
+                    {
+                        value = false;
+                    }
+
+                    if (!value) {
+                        reject('Not Found');
+                    }
+                    else {
+                        var dictionary = mockDB[self.scope][self.uuid];
+                        value = [];
+                        Object.keys(dictionary)
+                            .forEach(function (key) {
+                                value.push(JSON.parse(dictionary[key]));
+                            });
+
+                        fulfill(JSON.stringify(value));
+                    }
+                }
+                catch (error) {
+                    reject(error);
+                }
             });
 
         });

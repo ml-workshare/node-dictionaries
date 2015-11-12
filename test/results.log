@@ -132,46 +132,6 @@ GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.js
 		"name"    : "GOTCHA",
 		"payload" : true
 	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
-		"cuteness": 42,
-		"enabled" : false,
-		"name"    : "GOTCHA",
-		"payload" : true
-	}, {
 		"document-preview-2-dot-0": true,
 		"full-page-layout"        : false,
 		"name"                    : "canary",
@@ -238,10 +198,102 @@ GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.js
 		"enabled" : false,
 		"name"    : "GOTCHA",
 		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
 	}
 ]
  
 GET FILTER =================================
+GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.json?filters%5Bpayload%5D=true
+[
+	{
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"added"   : "this",
+		"cuteness": -12,
+		"enabled" : true,
+		"name"    : "TEST_OTHER",
+		"payload" : true,
+		"type"    : "weird"
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}, {
+		"cuteness": 42,
+		"enabled" : false,
+		"name"    : "GOTCHA",
+		"payload" : true
+	}
+]
+ 
 GET https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries.json?filters%5Bpayload%5D=true&filters%5Benabled%5D=true
 [{
 		"added"   : "this",

@@ -30,7 +30,7 @@ $PRETTY $OUT
 echo " "
 echo "RESET ======================================="
 
-for N in TEST_DICTIONARY TEST_OTHER TEST_NONOBJECT TEST_ARRAY TEST_DELETE GOTCHA
+for N in TEST_DICTIONARY TEST_OTHER TEST_NONOBJECT TEST_ARRAY TEST_DELETE GOTCHA GOTCHA GOTCHA GOTCHA
 do
     Q="$BASE/$N.json"
     echo DELETE $N
@@ -91,6 +91,7 @@ $PRETTY $OUT
 
 echo " "
 echo "DELETE ========================================="
+N=TEST_DELETE
 Q="$BASE/$N.json"
 echo DELETE $N $Q
 curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
@@ -98,6 +99,7 @@ $PRETTY $OUT
 
 echo " "
 echo "GET ========================================="
+N=TEST_DELETE
 Q="$BASE/$N.json"
 echo GET $N $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
@@ -137,5 +139,14 @@ Q="$BASE.json?filters%5Bpayload%5D=true&filters%5Benabled%5D=true"
 echo GET $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
+
+echo " "
+echo "DELETE ========================================="
+N=TEST_OTHER
+Q="$BASE/$N.json"
+echo DELETE $N $Q
+curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
+$PRETTY $OUT
+
 
 rm get.out

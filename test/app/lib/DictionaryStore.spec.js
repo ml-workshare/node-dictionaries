@@ -107,19 +107,43 @@ describe('DictionaryStore', function () {
     });
 
     describe('willDelete', function () {
-        test('should promise to delete a dictionary value', function (asyncDone) {
-            var RESULT = {},
+        it('should promise to delete a dictionary value', function (asyncDone) {
+            var DATA = {
+                    name: 'GOTCHA',
+                    payload: true,
+                    enabled: false,
+                    cuteness: 42
+                },
                 promise = this.dictionary.willDelete(
                     'TEST_DELETE'
                 );
 
-            
             promise.then(function (result) {
-                testAsync(asyncDone, function () {
-                    expect(JSON.parse(result))
-                        .to.be.deep.equal(RESULT);
+                    testAsync(asyncDone, function () {
+                        expect(JSON.parse(result))
+                            .to.be.deep.equal(DATA);
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
                 });
-            });
+
+        });
+
+        it('should reject promise when dictionary not present', function (asyncDone) {
+            var promise = this.dictionary.willDelete(
+                'TEST_DELETE'
+            );
+
+            promise.then(function (result) {
+                    asyncDone(new Error('FAIL should not fulfill ' + result));
+                })
+                .catch(function (reason) {
+                    testAsync(asyncDone, function () {
+                        expect(reason)
+                            .to.be.deep.equal('Not Found');
+                    });
+                });
 
         });
     });

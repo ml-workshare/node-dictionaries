@@ -122,9 +122,23 @@ class DictionaryStore {
         });
     }
 
+    _filter(values, filters) {
+        var match = true;
+        Object.keys(filters).forEach(function (key) {
+            if (!(key in values)) {
+                match = false;
+            }
+            else if (values[key] !== filters[key]) {
+                match = false;
+            }
+        });
+        return match;
+    }
+
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
         var self = this;
+        filters = filters || {};
         return new Promise(function (fulfill, reject) {
 
             process.nextTick(function () {
@@ -149,7 +163,10 @@ class DictionaryStore {
                         value = [];
                         Object.keys(dictionary)
                             .forEach(function (key) {
-                                value.push(JSON.parse(dictionary[key]));
+                                var values = JSON.parse(dictionary[key]);
+                                if (self._filter(values, filters)) {
+                                    value.push(values);
+                                }
                             });
 
                         fulfill(JSON.stringify(value));

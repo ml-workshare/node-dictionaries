@@ -1,8 +1,7 @@
 'use strict';
 
 describe('DictionaryStore', function () {
-    var DictionaryStore = require('../../../app/lib/DictionaryStore'),
-        test = it.skip;
+    var DictionaryStore = require('../../../app/lib/DictionaryStore');
 
     beforeEach(function () {
         this.dictionary = new DictionaryStore({
@@ -280,11 +279,15 @@ describe('DictionaryStore', function () {
                 });
         });
 
-        test('should promise to get a filtered collection', function (asyncDone) {
-            var RESULT = {},
-                promise = this.dictionary.willGetCollection({
+        it('should promise to get a filtered collection', function (asyncDone) {
+            var RESULT = [{
+                    name: 'TEST_DICTIONARY',
                     payload: true,
-                    enabled: true
+                    enabled: false,
+                    cuteness: 42
+                }],
+                promise = this.dictionary.willGetCollection({
+                    payload: true
                 });
 
             promise.then(function (result) {
@@ -294,6 +297,27 @@ describe('DictionaryStore', function () {
 
                         console.log(sorted);
 
+                        expect(sorted)
+                            .to.be.deep.equal(RESULT.sort(sorter));
+                    });
+                })
+                .catch(function (reason) {
+                    asyncDone(new Error('FAIL should not reject ' + reason));
+                });
+        });
+
+        it('should promise to get filter with no match', function (asyncDone) {
+            var RESULT = [],
+                promise = this.dictionary.willGetCollection({
+                    payload: true,
+                    missing: true
+                });
+
+            promise.then(function (result) {
+
+                    testAsync(asyncDone, function () {
+                        var sorted = JSON.parse(result).sort(sorter);
+                        
                         expect(sorted)
                             .to.be.deep.equal(RESULT.sort(sorter));
                     });

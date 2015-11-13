@@ -18,9 +18,8 @@ TBD
 
 In the project directory, launch:
 
-    sudo npm install -g nodemon forever jshint
+    sudo npm install -g nodemon forever jshint grunt
     npm install
-    npm run setup
 
 You'll need to do this once or when dependencies change.
 

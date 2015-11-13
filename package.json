@@ -4,13 +4,16 @@
   "version": "1.0.0",
   "description": "Workshare dictionary microservice in nodejs",
   "main": "app.js",
+  "engines": {
+    "node": "4.2.1"
+  },
   "scripts": {
+    "postinstall": "ln -s ../../config/pre-commit .git/hooks/pre-commit; grunt",
     "test": "grunt coverage",
     "start": "export NODE_ENV=production; forever start ./config/forever.prod.json",
     "stop": "forever stop dictionarysvc-prod",
     "restart": "forever restart dictionarysvc-prod",
     "pretest": "grunt check",
-    "setup": "ln -s ../../config/pre-commit .git/hooks/pre-commit",
     "serve": "export NODE_ENV=development; nodemon --watch app.js --watch app/ --delay 1 --verbose",
     "debug": "export NODE_ENV=development; DEBUG=* nodemon --watch app.js --watch app/ --delay 1 --verbose",
     "covereach": "for plan in `find test/app/ -name *.spec.js`; do echo === $plan ===================================; rm -rf doc/coverage/*; grunt coverage --plan $plan; done",

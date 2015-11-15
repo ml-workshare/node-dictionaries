@@ -48,6 +48,7 @@ global.chai = require('chai');
 global.should = chai.should();
 global.expect = chai.expect;
 global.assert = chai.assert;
+global.chai.use(require('chai-as-promised'));
 global.AssertionError = chai.AssertionError;
 global.sinon = require('sinon');
 

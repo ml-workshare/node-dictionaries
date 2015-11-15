@@ -1,6 +1,9 @@
 #!/bin/bash
 # ./test.sh | tee results.log
 
+# specs for the service
+# https://github.com/jesuspc/node_club-dictionaries/blob/master/README.md
+
 COOKIE=qa_session_id=32da49ee4fd3044ea9caa2acf03b2785
 
 BASE=https://qa.workshare.com/dictionaries/api/v1.0/users/current/dictionaries

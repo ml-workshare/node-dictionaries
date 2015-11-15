@@ -34,6 +34,7 @@ class DictionaryStore {
                     mockDB[self.scope][self.uuid][name] = value;
 
                     fulfill(value);
+                    //reject(new Error('what'));void fulfill;
                 }
                 catch (error) {
                     reject(error);

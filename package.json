@@ -16,6 +16,7 @@
     "pretest": "grunt check",
     "serve": "export NODE_ENV=development; nodemon --watch app.js --watch app/ --delay 1 --verbose",
     "debug": "export NODE_ENV=development; DEBUG=* nodemon --watch app.js --watch app/ --delay 1 --verbose",
+    "debugtest": "export NODE_DEBUG=module; DEBUG=* grunt coverage",
     "covereach": "for plan in `find test/app/ -name *.spec.js`; do echo === $plan ===================================; rm -rf doc/coverage/*; grunt coverage --plan $plan; done",
     "coverage-view": "chromium-browser doc/coverage/index.html",
     "edit": "subl Gruntfile.js app.js package.json README.md `find app/ test/ config/ swagger-ui/ -type f`",

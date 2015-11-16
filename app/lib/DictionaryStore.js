@@ -2,7 +2,7 @@
 
 'use strict';
 
-var category = 'Dictionary',
+var category = 'DictionaryStore',
     logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
     mockDB = {};

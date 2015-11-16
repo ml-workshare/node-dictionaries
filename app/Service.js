@@ -9,14 +9,18 @@ var category = 'Service',
     express = require('express'),
     VersionAPI = require('./VersionAPI'),
     HealthCheckAPI = require('./HealthCheckAPI'),
-    swaggerUiMiddleware = require('swagger-ui-middleware');
+    DictionaryAPI = require('./DictionaryAPI'),
+    swaggerUiMiddleware = require('swagger-ui-middleware'),
+    baseUrl = '/dictionaries/api/v1.0/';
 
 class Service {
+
     constructor(apis) {
         debug('constructor()');
         this.apis = apis || {};
         this._initAPI('healthCheckAPI', HealthCheckAPI);
         this._initAPI('versionAPI', VersionAPI);
+        this._initAPI('dictionaryAPI', DictionaryAPI);
     }
 
     _initAPI(name, APIClass) {
@@ -28,6 +32,7 @@ class Service {
     start(port) {
         var app = express(),
             healthCheckAPI = this.healthCheckAPI,
+            dictionaryAPI = this.dictionaryAPI,
             versionAPI = this.versionAPI,
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
@@ -46,17 +51,17 @@ class Service {
                 overrides: swaggerDir
             });
 
-        /*
-        app.get('/api/countries(?:\.json)?/:hosts', function(request, response) {
-            locationAPI.get(request, response);
-        });
-        */
         app.get('/admin/healthCheck', function(request, response) {
             healthCheckAPI.get(request, response);
         });
 
         app.get('/admin/version', function(request, response) {
             versionAPI.get(request, response);
+        });
+
+        app.get(baseUrl + ':scope/:uuid/dictionaries/:dictionaryName.json',
+            function(request, response) {
+                dictionaryAPI.get(request, response);
         });
 
         var server = http.createServer(app);

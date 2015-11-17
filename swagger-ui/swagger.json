@@ -1,52 +1,139 @@
 {
-    "swagger": "2.0",
-    "basePath": "/",
-    "info": {
-        "title": "Location API",
-        "description": "Location API. This product includes GeoLite2 data created by MaxMind, available from <a href=\"http://www.maxmind.com\">http://www.maxmind.com</a>."
-    },
-    "schemes": [
-        "http"
-    ],
-    "paths": {
-
-        "/api/countries/{hosts}": {
-            "get": {
-                "tags": [
-                    "Countries"
-                ],
-                "summary": "Get country information for comma separated IP addresses",
-                "description": "Get country information for comma separated IP addresses",
-                "operationId": "getCountryInfoByHosts",
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "hosts",
-                        "description": "IP address(es) or hosts to query",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "400": {
-                        "description": "Invalid parameter(s) supplied"
-                    }
-                }
-            }
-        }
-    },
-    "securityDefinitions": {
-        "api_key": {
-            "type": "apiKey",
-            "name": "api_key",
-            "in": "header"
-        }
-    }
+	"apis"          : [
+		{
+			"operations": [
+				{
+					"httpMethod": "GET",
+					"nickname"  : "GET-api--version--scope--uuid-dictionaries---format-",
+					"notes"     : "",
+					"parameters": [
+						{
+							"dataType"   : "String",
+							"description": "Can be: 'users' or 'accounts'",
+							"name"       : "scope",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "User UUID or Account UUID or 'current'",
+							"name"       : "uuid",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "Filters to apply (optional). Example: filters[folder_id]=123",
+							"name"       : "filters",
+							"paramType"  : "query",
+							"required"   : false,
+							"type"       : "String"
+						}
+					],
+					"produces"  : ["application/json"],
+					"summary"   : "Get all the dictionaries for a given scope."
+				}
+			],
+			"path"      : "/api/v1.0/{scope}/{uuid}/dictionaries.{format}"
+		}, {
+			"operations": [
+				{
+					"httpMethod": "GET",
+					"nickname"  : "GET-api--version--scope--uuid-dictionaries--name---format-",
+					"notes"     : "",
+					"parameters": [
+						{
+							"dataType"   : "String",
+							"description": "Can be: 'users' or 'accounts'",
+							"name"       : "scope",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "User UUID or Account UUID or 'current'",
+							"name"       : "uuid",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "Dictionary name.",
+							"name"       : "name",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}
+					],
+					"produces"  : ["application/json"],
+					"summary"   : "Get the content of a specific dictionary."
+				}, {
+					"httpMethod": "PUT",
+					"nickname"  : "PUT-api--version--scope--uuid-dictionaries--name---format-",
+					"notes"     : "",
+					"parameters": [
+						{
+							"dataType"   : "String",
+							"description": "Can be: 'users' or 'accounts'",
+							"name"       : "scope",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "User UUID or Account UUID or 'current'",
+							"name"       : "uuid",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "Dictionary name.",
+							"name"       : "name",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}
+					],
+					"produces"  : ["application/json"],
+					"summary"   : "Creates or updates a dictionary. Body payload is a Hashmap."
+				}, {
+					"httpMethod": "DELETE",
+					"nickname"  : "DELETE-api--version--scope--uuid-dictionaries--name---format-",
+					"notes"     : "",
+					"parameters": [
+						{
+							"dataType"   : "String",
+							"description": "Can be: 'users' or 'accounts'",
+							"name"       : "scope",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "User UUID or Account UUID or 'current'",
+							"name"       : "uuid",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}, {
+							"dataType"   : "String",
+							"description": "Dictionary name.",
+							"name"       : "name",
+							"paramType"  : "path",
+							"required"   : true,
+							"type"       : "String"
+						}
+					],
+					"produces"  : ["application/json"],
+					"summary"   : "Deletes a dictionary returning it."
+				}
+			],
+			"path"      : "/api/v1.0/{scope}/{uuid}/dictionaries/{name}.{format}"
+		}
+	],
+	"apiVersion"    : "v1.0",
+	"basePath"      : "https://localhost:19001/dictionaries",
+	"resourcePath"  : "",
+	"swaggerVersion": "1.2"
 }

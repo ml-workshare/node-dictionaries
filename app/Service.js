@@ -7,6 +7,7 @@ var category = 'Service',
     path = require('path'),
     http = require('http'),
     express = require('express'),
+    bodyParser = require('body-parser'),
     VersionAPI = require('./VersionAPI'),
     HealthCheckAPI = require('./HealthCheckAPI'),
     DictionaryAPI = require('./DictionaryAPI'),
@@ -43,6 +44,9 @@ class Service {
             log.getLogger('http'),
             { level: 'auto' }
         ));
+
+        // for parsing application/json
+        app.use(bodyParser.json());
 
         swaggerUiMiddleware.hostUI(
             app,

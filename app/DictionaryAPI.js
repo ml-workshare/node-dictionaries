@@ -27,7 +27,7 @@ class DictionaryAPI {
                 uuid: uuid
             });
 
-        debug('get');
+        debug('get', query);
         dictionaryStore.willGet(dictionaryName)
             .then(function (result) {
                 try {
@@ -53,17 +53,15 @@ class DictionaryAPI {
             scope = request.params.scope,
             uuid = request.params.uuid,
             dictionaryName = request.params.dictionaryName,
-
-            // MUSTDO need a body parser to get the payload
-            dictionaryValue = JSON.stringify({ payload: true }),
-
+            dictionaryValue = request.body,
             query = [scope,  uuid,  dictionaryName].join('/'),
             dictionaryStore = new DictionaryStore ({
                 scope: scope,
                 uuid: uuid
             });
 
-        dictionaryStore.willSet(dictionaryName, dictionaryValue)
+        debug('put', query, dictionaryValue);
+        dictionaryStore.willSet(dictionaryName, JSON.stringify(dictionaryValue))
             .then(function (result) {
                 try {
                     logger.info('OK put: ' + query);

@@ -42,51 +42,7 @@ describe('DictionaryStore', function () {
                     'TEST_DICTIONARY',
                     JSON.stringify(DATA)
                 );
-
-            if (true) {
                 this.checkFulfillment(promise, RESULT, asyncDone);
-            }
-            else {
-
-                // sorry, tried to use chai-as-promised but it does not appear to
-                // work right/reliably, gives false positives or obscure errors
-                // TO BE REMOVED AFTER DEMO
-
-                // PROPER PASS but only one check per test
-                //promise.should.be.fulfilled.notify(asyncDone);
-                promise.should.eventually.equal(JSON.stringify(RESULT)).notify(asyncDone);
-
-                /*              // FALSE PASSES!!! 'return' does not work.
-                 return Promise.all([
-                     promise.should.be.rejected,
-                     promise.should.be.rejectedWith(RESULT)
-                 ]);
-                 return promise.should.be.rejected;
-                 return promise.should.be.rejectedWith(RESULT);
-                 return promise.should.be.rejectedWith('NOT THIS');
-                 */
-
-                // PROPER FAILURE but Unspecified Assertion Error
-                //promise.should.be.rejectedWith('NOT THIS').notify(asyncDone);
-                //promise.should.be.rejectedWith(RESULT).notify(asyncDone);
-
-                // PROPER FAILURE but only one assertion per test
-                //promise.should.be.rejected.notify(asyncDone);
-                //promise.should.eventually.equal(JSON.stringify(DATA)).notify(asyncDone);
-
-/*              // PROPER FAILURE
-                Promise.all([
-                    promise.should.be.rejected.notify(asyncDone),
-                    promise.should.be.rejectedWith(RESULT)
-                ]);
-
-                // PROPER FAILURE but with Unspecified Assertion Error
-                Promise.all([
-                    promise.should.be.rejected.notify(asyncDone),
-                    promise.should.be.rejectedWith(RESULT).notify(asyncDone)
-                ]);
-*/
-            }
         });
 
         it('should promise to set another dictionary value', function (asyncDone) {

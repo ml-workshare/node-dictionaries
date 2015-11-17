@@ -5,7 +5,7 @@ COOKIE=qa_session_id=32da49ee4fd3044ea9caa2acf03b2785
 TESTHOST=http://localhost:19001
 BASE=$TESTHOST/dictionaries/api/v1.0/users/current/dictionaries
 PRETTY=cat
-if ( which prettydiff.sh ) ; then
+if ( which prettydiff.sh > /dev/null ) ; then
     PRETTY=prettydiff.sh
 fi
 

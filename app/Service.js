@@ -55,23 +55,26 @@ class Service {
                 overrides: swaggerDir
             });
 
-        app.get('/admin/healthCheck', function(request, response) {
+        app.get('/dictionaries/admin/healthCheck', function(request, response) {
             healthCheckAPI.get(request, response);
         });
 
-        app.get('/admin/version', function(request, response) {
+        app.get('/dictionaries/admin/version', function(request, response) {
             versionAPI.get(request, response);
         });
 
-        app.get(baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
-            function(request, response) {
-                dictionaryAPI.get(request, response);
+        var singleEntryUrl = baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json';
+        app.get(singleEntryUrl, function(request, response) {
+            dictionaryAPI.get(request, response);
         });
 
-        app.put(baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
-            function(request, response) {
-                dictionaryAPI.put(request, response);
-            });
+        app.put(singleEntryUrl, function(request, response) {
+            dictionaryAPI.put(request, response);
+        });
+
+        app.delete(singleEntryUrl, function(request, response) {
+            dictionaryAPI.put(request, response);
+        });
 
         var server = http.createServer(app);
         server.listen(port, function() {

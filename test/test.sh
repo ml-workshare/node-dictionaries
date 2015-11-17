@@ -10,26 +10,26 @@ TESTHOST=https://qa.workshare.com
 TESTHOST=http://localhost:19001
 BASE=$TESTHOST/dictionaries/api/v1.0/users/current/dictionaries
 PRETTY=cat
-if ( which prettydiff.sh ) ; then
+if ( which prettydiff.sh > /dev/null ) ; then
     PRETTY=prettydiff.sh
 fi
 OUT=get.out
 
 echo " "
 echo "SWAGGER ======================================"
-Q="https://qa.workshare.com/dictionaries/swagger-ui/index.html"
+Q="$TESTHOST/dictionaries/swagger-ui/index.html"
 echo GET $Q
 
 echo " "
 echo "HEALTH ======================================="
-Q="https://qa.workshare.com/dictionaries/admin/healthcheck"
+Q="$TESTHOST/dictionaries/admin/healthcheck"
 echo GET $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
 
 echo " "
 echo "VERSION ======================================"
-Q="https://qa.workshare.com/dictionaries/admin/version"
+Q="$TESTHOST/dictionaries/admin/version"
 echo GET $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT

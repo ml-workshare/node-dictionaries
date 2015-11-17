@@ -5,7 +5,13 @@
 var category = 'DictionaryStore',
     logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    mockDB = {};
+    mockDB = {
+        users: {
+            current: {
+                GOTCHA: JSON.stringify({ payload: true })
+            }
+        }
+    };
 
 class DictionaryStore {
     constructor(options) {

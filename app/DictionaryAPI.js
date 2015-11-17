@@ -17,26 +17,62 @@ class DictionaryAPI {
 
     get(request, response) {
 
-        debug('get');
         var self = this,
             scope = request.params.scope,
             uuid = request.params.uuid,
             dictionaryName = request.params.dictionaryName,
+            query = [scope,  uuid,  dictionaryName].join('/'),
             dictionaryStore = new DictionaryStore ({
                 scope: scope,
                 uuid: uuid
             });
 
+        debug('get');
         dictionaryStore.willGet(dictionaryName)
             .then(function (result) {
                 try {
-                    logger.info('OK get: ' + [scope,  uuid,  dictionaryName].join('/'));
+                    logger.info('OK get: ' + query);
                     response.status(200)
                         .json(JSON.parse(result));
                 }
                 catch (error)
                 {
-                    self.errorSync(response, error, result);
+                    self.errorSync(response, query, error, result);
+                }
+            })
+            .catch(function (error) {
+                self.errorSync(response, query, error);
+            });
+
+    }
+
+    put(request, response) {
+
+        debug('put');
+        var self = this,
+            scope = request.params.scope,
+            uuid = request.params.uuid,
+            dictionaryName = request.params.dictionaryName,
+
+            // MUSTDO need a body parser to get the payload
+            dictionaryValue = JSON.stringify({ payload: true }),
+
+            query = [scope,  uuid,  dictionaryName].join('/'),
+            dictionaryStore = new DictionaryStore ({
+                scope: scope,
+                uuid: uuid
+            });
+
+        dictionaryStore.willSet(dictionaryName, dictionaryValue)
+            .then(function (result) {
+                try {
+                    logger.info('OK put: ' + query);
+                    response.status(200)
+                        .json(JSON.parse(result));
+                }
+                catch (error)
+                {
+                    self.errorSync(response, query, error, result);
                 }
             })
             .catch(function (error) {
@@ -45,8 +81,8 @@ class DictionaryAPI {
 
     }
 
-    errorSync (response, error, result) {
-        logger.error(error);
+    errorSync (response, query, error, result) {
+        logger.error(query + ': ' + error);
         if (result) {
             logger.error('from result: ', result);
         }

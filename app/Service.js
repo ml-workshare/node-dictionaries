@@ -11,7 +11,7 @@ var category = 'Service',
     HealthCheckAPI = require('./HealthCheckAPI'),
     DictionaryAPI = require('./DictionaryAPI'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
-    baseUrl = '/dictionaries/api/v1.0/';
+    baseUrl = '/dictionaries/api/v1.0';
 
 class Service {
 
@@ -59,10 +59,15 @@ class Service {
             versionAPI.get(request, response);
         });
 
-        app.get(baseUrl + ':scope/:uuid/dictionaries/:dictionaryName.json',
+        app.get(baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
             function(request, response) {
                 dictionaryAPI.get(request, response);
         });
+
+        app.put(baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
+            function(request, response) {
+                dictionaryAPI.put(request, response);
+            });
 
         var server = http.createServer(app);
         server.listen(port, function() {

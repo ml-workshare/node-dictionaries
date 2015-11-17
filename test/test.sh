@@ -15,8 +15,6 @@ if ( which prettydiff.sh ) ; then
 fi
 OUT=get.out
 
-if ( /bin/false ) ; then
-
 echo " "
 echo "SWAGGER ======================================"
 Q="https://qa.workshare.com/dictionaries/swagger-ui/index.html"
@@ -55,7 +53,6 @@ echo GET $N $Q
 curl -H "Cookie: qa_session=plugh;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
 
-fi
 
 echo " "
 echo "PUT ========================================="
@@ -64,8 +61,6 @@ Q="$BASE/$N.json"
 echo PUT $N $Q
 curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -d '{"name": "GOTCHA", "payload": true, "enabled": false, "cuteness": 42}' -X PUT "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
-
-if ( /bin/false ) ; then
 
 echo " "
 N=TEST_OTHER
@@ -166,7 +161,5 @@ Q="$BASE/$N.json"
 echo DELETE $N $Q
 curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
-
-fi
 
 rm get.out

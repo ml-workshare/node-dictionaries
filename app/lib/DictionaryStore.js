@@ -121,19 +121,6 @@ class DictionaryStore {
         });
     }
 
-    _filter(valueObjs, filters) {
-        var match = true;
-        Object.keys(filters).forEach(function (key) {
-            if (!(key in valueObjs)) {
-                match = false;
-            }
-            else if (valueObjs[key] !== filters[key]) {
-                match = false;
-            }
-        });
-        return match;
-    }
-
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
         var self = this;
@@ -185,6 +172,42 @@ class DictionaryStore {
             error_code: 'die',
             error_msg: error
         };
+    }
+
+    _filter(valueObjs, filters) {
+        var match = true;
+        try {
+            Object.keys(filters).forEach(function (key) {
+
+                var value = this._getTrueFalse(filters[key]);
+                debug('_filter', key, value, valueObjs, filters);
+                if (value && !(key in valueObjs)) {
+                    match = false;
+                }
+                else if (key in valueObjs && valueObjs[key] !== value) {
+                    match = false;
+                }
+                if (!match)
+                {
+                    throw new Error('not matched');
+                }
+            });
+        }
+        catch (err) {
+            debug('caught', err);
+        }
+        debug('match', match);
+        return match;
+    }
+
+    _getTrueFalse(value) {
+        if (value === 'true') {
+            value = true;
+        }
+        if (value === 'false') {
+            value = false;
+        }
+        return value;
     }
 }
 

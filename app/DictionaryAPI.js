@@ -28,6 +28,35 @@ class DictionaryAPI {
         this._handleNamedItem('delete', 'willDelete', request, response);
     }
 
+    getCollection(request, response) {
+        var self = this,
+            scope = request.params.scope,
+            uuid = request.params.uuid,
+            dictionaryFilters = request.query,
+            query = [scope, uuid, JSON.stringify(dictionaryFilters)].join('/'),
+            dictionaryStore = new DictionaryStore ({
+                scope: scope,
+                uuid: uuid
+            });
+
+        debug('get', query);
+        dictionaryStore.willGetCollection(dictionaryFilters.filters)
+            .then(function (result) {
+                try {
+                    logger.info('OK get: ' + query);
+                    response.status(200)
+                        .json(result);
+                }
+                catch (error)
+                {
+                    self.errorSync(response, query, error, result);
+                }
+            })
+            .catch(function (error) {
+                self.errorSync(response, query, error);
+            });
+    }
+
     errorSync (response, query, error, result) {
         logger.error(query + ': ' + error);
         if (result) {
@@ -44,7 +73,7 @@ class DictionaryAPI {
             uuid = request.params.uuid,
             dictionaryName = request.params.dictionaryName,
             dictionaryValue = request.body,
-            query = [scope,  uuid,  dictionaryName].join('/'),
+            query = [scope, uuid, dictionaryName].join('/'),
             dictionaryStore = new DictionaryStore ({
                 scope: scope,
                 uuid: uuid
@@ -66,7 +95,6 @@ class DictionaryAPI {
             .catch(function (error) {
                 self.errorSync(response, query, error);
             });
-
     }
 
 }

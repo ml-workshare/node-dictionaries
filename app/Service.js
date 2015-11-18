@@ -64,6 +64,12 @@ class Service {
         });
 
         var singleEntryUrl = baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json';
+        var allUrl = baseUrl + '/:scope/:uuid/dictionaries.json';
+
+        app.get(allUrl, function(request, response) {
+            dictionaryAPI.getCollection(request, response);
+        });
+
         app.get(singleEntryUrl, function(request, response) {
             dictionaryAPI.get(request, response);
         });

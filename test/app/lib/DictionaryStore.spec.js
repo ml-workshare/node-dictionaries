@@ -40,7 +40,7 @@ describe('DictionaryStore', function () {
                 },
                 promise = this.dictionary.willSet(
                     'TEST_DICTIONARY',
-                    JSON.stringify(DATA)
+                    DATA
                 );
                 this.checkFulfillment(promise, RESULT, asyncDone);
         });
@@ -61,7 +61,7 @@ describe('DictionaryStore', function () {
                 },
                 promise = this.dictionary.willSet(
                     'TEST_OTHER',
-                    JSON.stringify(DATA)
+                    DATA
                 );
 
             this.checkFulfillment(promise, RESULT, asyncDone);
@@ -84,7 +84,7 @@ describe('DictionaryStore', function () {
                 },
                 promise = this.dictionary.willSet(
                     'TEST_OTHER',
-                    JSON.stringify(DATA)
+                    DATA
                 );
 
             this.checkFulfillment(promise, RESULT, asyncDone);
@@ -105,7 +105,7 @@ describe('DictionaryStore', function () {
                 },
                 promise = this.dictionary.willSet(
                     'TEST_DELETE',
-                    JSON.stringify(DATA)
+                    DATA
                 );
 
             this.checkFulfillment(promise, RESULT, asyncDone);
@@ -224,7 +224,7 @@ describe('DictionaryStore', function () {
         checkFulfillment: function (promise, expected, asyncDone) {
             promise.then(function (result) {
                     testAsync(asyncDone, function () {
-                        expect(JSON.parse(result))
+                        expect(result)
                             .to.be.deep.equal(expected);
                     });
                 })
@@ -238,7 +238,7 @@ describe('DictionaryStore', function () {
 
             promise.then(function (result) {
                     testAsync(asyncDone, function () {
-                        var sorted = JSON.parse(result).sort(sorter);
+                        var sorted = result.sort(sorter);
 
                         expect(sorted)
                             .to.be.deep.equal(expected.sort(sorter));

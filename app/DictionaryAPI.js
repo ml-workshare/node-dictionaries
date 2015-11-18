@@ -1,4 +1,5 @@
 // DictionaryAPI.js handle request parameters and use DictionaryStore to provide results
+/* jshint maxparams: 4 */
 
 'use strict';
 
@@ -33,7 +34,7 @@ class DictionaryAPI {
                 try {
                     logger.info('OK get: ' + query);
                     response.status(200)
-                        .json(JSON.parse(result));
+                        .json(result);
                 }
                 catch (error)
                 {
@@ -61,12 +62,12 @@ class DictionaryAPI {
             });
 
         debug('put', query, dictionaryValue);
-        dictionaryStore.willSet(dictionaryName, JSON.stringify(dictionaryValue))
+        dictionaryStore.willSet(dictionaryName, dictionaryValue)
             .then(function (result) {
                 try {
                     logger.info('OK put: ' + query);
                     response.status(200)
-                        .json(JSON.parse(result));
+                        .json(result);
                 }
                 catch (error)
                 {
@@ -75,6 +76,37 @@ class DictionaryAPI {
             })
             .catch(function (error) {
                 self.errorSync(response, error);
+            });
+
+    }
+
+    delete(request, response) {
+
+        var self = this,
+            scope = request.params.scope,
+            uuid = request.params.uuid,
+            dictionaryName = request.params.dictionaryName,
+            query = [scope,  uuid,  dictionaryName].join('/'),
+            dictionaryStore = new DictionaryStore ({
+                scope: scope,
+                uuid: uuid
+            });
+
+        debug('delete', query);
+        dictionaryStore.willDelete(dictionaryName)
+            .then(function (result) {
+                try {
+                    logger.info('OK delete: ' + query);
+                    response.status(200)
+                        .json(result);
+                }
+                catch (error)
+                {
+                    self.errorSync(response, query, error, result);
+                }
+            })
+            .catch(function (error) {
+                self.errorSync(response, query, error);
             });
 
     }

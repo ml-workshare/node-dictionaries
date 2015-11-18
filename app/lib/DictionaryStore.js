@@ -14,8 +14,8 @@ class DictionaryStore {
         this.scope = options.scope;
     }
 
-    willSet(name, value) {
-        debug('willSet()', name, value);
+    willSet(name, valueObj) {
+        debug('willSet()', name, valueObj);
         var self = this;
         return new Promise(function (fulfill, reject) {
             process.nextTick(function () {
@@ -28,12 +28,10 @@ class DictionaryStore {
                     {
                         mockDB[self.scope][self.uuid] = {};
                     }
-                    value = JSON.parse(value);
-                    value.name = name;
-                    value = JSON.stringify(value);
-                    mockDB[self.scope][self.uuid][name] = value;
+                    valueObj.name = name;
+                    mockDB[self.scope][self.uuid][name] = valueObj;
 
-                    fulfill(value);
+                    fulfill(valueObj);
                     //reject(new Error('what'));void fulfill;
                 }
                 catch (error) {
@@ -52,28 +50,28 @@ class DictionaryStore {
             process.nextTick(function () {
                 /* jshint maxcomplexity: 6 */
                 try {
-                    var value = true;
+                    var valueObj = true;
 
                     if (!(self.scope in mockDB))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (value && !(self.uuid in mockDB[self.scope]))
+                    if (valueObj && !(self.uuid in mockDB[self.scope]))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (value && !(name in mockDB[self.scope][self.uuid]))
+                    if (valueObj && !(name in mockDB[self.scope][self.uuid]))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (!value) {
+                    if (!valueObj) {
                         reject('Not Found');
                     }
                     else {
-                        value = mockDB[self.scope][self.uuid][name];
+                        valueObj = mockDB[self.scope][self.uuid][name];
                         delete mockDB[self.scope][self.uuid][name];
 
-                        fulfill(value);
+                        fulfill(valueObj);
                     }
                 }
                 catch (error) {
@@ -92,27 +90,27 @@ class DictionaryStore {
             process.nextTick(function () {
                 /* jshint maxcomplexity: 6 */
                 try {
-                    var value = true;
+                    var valueObj = true;
 
                     if (!(self.scope in mockDB))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (value && !(self.uuid in mockDB[self.scope]))
+                    if (valueObj && !(self.uuid in mockDB[self.scope]))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (value && !(name in mockDB[self.scope][self.uuid]))
+                    if (valueObj && !(name in mockDB[self.scope][self.uuid]))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (!value) {
+                    if (!valueObj) {
                         reject('Not Found');
                     }
                     else {
-                        value = mockDB[self.scope][self.uuid][name];
+                        valueObj = mockDB[self.scope][self.uuid][name];
 
-                        fulfill(value);
+                        fulfill(valueObj);
                     }
                 }
                 catch (error) {
@@ -123,13 +121,13 @@ class DictionaryStore {
         });
     }
 
-    _filter(values, filters) {
+    _filter(valueObjs, filters) {
         var match = true;
         Object.keys(filters).forEach(function (key) {
-            if (!(key in values)) {
+            if (!(key in valueObjs)) {
                 match = false;
             }
-            else if (values[key] !== filters[key]) {
+            else if (valueObjs[key] !== filters[key]) {
                 match = false;
             }
         });
@@ -145,32 +143,32 @@ class DictionaryStore {
             process.nextTick(function () {
                 /* jshint maxcomplexity: 5 */
                 try {
-                    var value = true;
+                    var valueObj = true;
 
                     if (!(self.scope in mockDB))
                     {
-                        value = false;
+                        valueObj = false;
                     }
-                    if (value && !(self.uuid in mockDB[self.scope]))
+                    if (valueObj && !(self.uuid in mockDB[self.scope]))
                     {
-                        value = false;
+                        valueObj = false;
                     }
 
-                    if (!value) {
+                    if (!valueObj) {
                         reject('Not Found');
                     }
                     else {
                         var dictionary = mockDB[self.scope][self.uuid];
-                        value = [];
+                        valueObj = [];
                         Object.keys(dictionary)
                             .forEach(function (key) {
-                                var values = JSON.parse(dictionary[key]);
-                                if (self._filter(values, filters)) {
-                                    value.push(values);
+                                var valueObjs = dictionary[key];
+                                if (self._filter(valueObjs, filters)) {
+                                    valueObj.push(valueObjs);
                                 }
                             });
 
-                        fulfill(JSON.stringify(value));
+                        fulfill(valueObj);
                     }
                 }
                 catch (error) {

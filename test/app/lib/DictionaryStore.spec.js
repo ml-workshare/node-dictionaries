@@ -1,6 +1,7 @@
 'use strict';
+var debug = require('debug')('test');
 
-describe('DictionaryStore', function () {
+describe.only('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         _ = require('underscore'),
         testHelper;
@@ -132,7 +133,7 @@ describe('DictionaryStore', function () {
                 'TEST_DELETE'
             );
 
-            this.checkRejection(promise, 'Not Found', asyncDone);
+            this.checkFulfillment(promise, null, asyncDone);
         });
     });
 
@@ -172,7 +173,7 @@ describe('DictionaryStore', function () {
                     'TEST_DELETE'
                 );
 
-            this.checkRejection(promise, 'Not Found', asyncDone);
+            this.checkFulfillment(promise, null, asyncDone);
         });
     });
 
@@ -240,6 +241,8 @@ describe('DictionaryStore', function () {
                     testAsync(asyncDone, function () {
                         var sorted = result.sort(sorter);
 
+                        debug(sorted);
+                        debug(expected);
                         expect(sorted)
                             .to.be.deep.equal(expected.sort(sorter));
                     });

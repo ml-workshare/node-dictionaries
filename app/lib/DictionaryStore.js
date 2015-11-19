@@ -1,11 +1,9 @@
-// DictionaryStore.js - (sorry) Dictionary storage for a given user and scope
-
 'use strict';
 
-var category = 'DictionaryStore',
+var category = 'Dictionary',
     logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    mockDB = {};
+    db = require('monk')('localhost/dictionaries');
 
 class DictionaryStore {
     constructor(options) {
@@ -14,156 +12,89 @@ class DictionaryStore {
         this.scope = options.scope;
     }
 
-    willSet(name, valueObj) {
-        debug('willSet()', name, valueObj);
-        var self = this;
-        return new Promise(function (fulfill, reject) {
-            process.nextTick(function () {
-                try {
-                    if (!(self.scope in mockDB))
-                    {
-                        mockDB[self.scope] = {};
-                    }
-                    if (!(self.uuid in mockDB[self.scope]))
-                    {
-                        mockDB[self.scope][self.uuid] = {};
-                    }
-                    valueObj.name = name;
-                    mockDB[self.scope][self.uuid][name] = valueObj;
-
-                    fulfill(valueObj);
-                    //reject(new Error('what'));void fulfill;
-                }
-                catch (error) {
-                    reject(error);
-                }
-            });
-
-        });
+    willSet(name, value) {
+        debug('willSet()', name, value);
+        var uuid = this.uuid;
+        var dbPromise = db.get(this.scope)
+            .findAndModify(
+                { uuid, name },
+                { uuid, name, value },
+                { upsert: true }
+            );
+        return this._willHandleDocument(dbPromise, name);
     }
 
     willDelete(name) {
         debug('willDelete()', name);
-        var self = this;
+        var uuid = this.uuid,
+            self = this;
         return new Promise(function (fulfill, reject) {
-
-            process.nextTick(function () {
-                /* jshint maxcomplexity: 6 */
-                try {
-                    var valueObj = true;
-
-                    if (!(self.scope in mockDB))
-                    {
-                        valueObj = false;
-                    }
-                    if (valueObj && !(self.uuid in mockDB[self.scope]))
-                    {
-                        valueObj = false;
-                    }
-                    if (valueObj && !(name in mockDB[self.scope][self.uuid]))
-                    {
-                        valueObj = false;
-                    }
-                    if (!valueObj) {
-                        reject('Not Found');
-                    }
-                    else {
-                        valueObj = mockDB[self.scope][self.uuid][name];
-                        delete mockDB[self.scope][self.uuid][name];
-
-                        fulfill(valueObj);
-                    }
-                }
-                catch (error) {
-                    reject(error);
-                }
+            self.willGet(name).then(function (document) {
+                db.get(self.scope).remove({ uuid, name });
+                fulfill(document);
+            }).catch(function (error) {
+                reject(error);
             });
-
         });
     }
 
     willGet(name) {
         debug('willGet()', name);
-        var self = this;
-        return new Promise(function (fulfill, reject) {
-
-            process.nextTick(function () {
-                /* jshint maxcomplexity: 6 */
-                try {
-                    var valueObj = true;
-
-                    if (!(self.scope in mockDB))
-                    {
-                        valueObj = false;
-                    }
-                    if (valueObj && !(self.uuid in mockDB[self.scope]))
-                    {
-                        valueObj = false;
-                    }
-                    if (valueObj && !(name in mockDB[self.scope][self.uuid]))
-                    {
-                        valueObj = false;
-                    }
-                    if (!valueObj) {
-                        reject('Not Found');
-                    }
-                    else {
-                        valueObj = mockDB[self.scope][self.uuid][name];
-
-                        fulfill(valueObj);
-                    }
-                }
-                catch (error) {
-                    reject(error);
-                }
-            });
-
-        });
+        var uuid = this.uuid;
+        var dbPromise = db.get(this.scope).findOne({ uuid, name });
+        return this._willHandleDocument(dbPromise, name);
     }
 
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
         var self = this;
-        filters = filters || {};
+        var mongoFilters = this._sanitizeFilters(filters);
+        mongoFilters.uuid = this.uuid;
         return new Promise(function (fulfill, reject) {
-
-            process.nextTick(function () {
-                /* jshint maxcomplexity: 5 */
-                try {
-                    var valueObj = true;
-
-                    if (!(self.scope in mockDB))
-                    {
-                        valueObj = false;
-                    }
-                    if (valueObj && !(self.uuid in mockDB[self.scope]))
-                    {
-                        valueObj = false;
-                    }
-
-                    if (!valueObj) {
-                        reject('Not Found');
-                    }
-                    else {
-                        var dictionary = mockDB[self.scope][self.uuid];
-                        valueObj = [];
-                        Object.keys(dictionary)
-                            .forEach(function (key) {
-                                var valueObjs = dictionary[key];
-                                if (self._filter(valueObjs, filters)) {
-                                    valueObj.push(valueObjs);
-                                }
-                            });
-
-                        fulfill(valueObj);
-                    }
-                }
-                catch (error) {
-                    reject(error);
-                }
+            db.get(self.scope).find(mongoFilters).success(function (documents) {
+                fulfill(documents.map(function (document) {
+                    return self._handleDocument(document);
+                }));
+            }).error(function (err) {
+                reject(err);
             });
-
         });
+    }
+
+    _sanitizeFilters(filters) {
+        var mongoFilters = {};
+        if (!filters) {
+            return mongoFilters;
+        }
+        Object.keys(filters).forEach(function (key) {
+            debug(key);
+            mongoFilters['value.' + key] = filters[key];
+        });
+        debug(mongoFilters);
+        debug(filters);
+        return mongoFilters;
+    }
+
+    _willHandleDocument(promise, name) {
+        debug('_willHandleDocument()');
+        var self = this;
+        return new Promise(function (fulfill, reject) {
+            promise.success(function (document) {
+                fulfill(self._handleDocument(document, name));
+            }).error(function (err) {
+                reject(err);
+            });
+        });
+    }
+
+    _handleDocument(document, name) {
+        if (document) {
+            var result = document.value;
+            result.name = name || document.name;
+            return result;
+        } else {
+            return document;
+        }
     }
 
     getErrorSync(error) {
@@ -172,43 +103,6 @@ class DictionaryStore {
             error_code: 'die',
             error_msg: error
         };
-    }
-
-    _filter(valueObjs, filters) {
-        var self = this;
-        var match = true;
-        try {
-            Object.keys(filters).forEach(function (key) {
-
-                var value = self._getTrueFalse(filters[key]);
-                debug('_filter', key, value, valueObjs, filters);
-                if (value && !(key in valueObjs)) {
-                    match = false;
-                }
-                else if (key in valueObjs && valueObjs[key] !== value) {
-                    match = false;
-                }
-                if (!match)
-                {
-                    throw new Error('not matched');
-                }
-            });
-        }
-        catch (err) {
-            debug('caught', err);
-        }
-        debug('match', match);
-        return match;
-    }
-
-    _getTrueFalse(value) {
-        if (value === 'true') {
-            value = true;
-        }
-        if (value === 'false') {
-            value = false;
-        }
-        return value;
     }
 }
 

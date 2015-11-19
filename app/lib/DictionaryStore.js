@@ -175,11 +175,12 @@ class DictionaryStore {
     }
 
     _filter(valueObjs, filters) {
+        var self = this;
         var match = true;
         try {
             Object.keys(filters).forEach(function (key) {
 
-                var value = this._getTrueFalse(filters[key]);
+                var value = self._getTrueFalse(filters[key]);
                 debug('_filter', key, value, valueObjs, filters);
                 if (value && !(key in valueObjs)) {
                     match = false;

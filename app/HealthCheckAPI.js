@@ -30,8 +30,11 @@ class HealthCheckAPI {
         response.status(healthy ? 200 : 500);
 
         response.json({
-            'database': {
-                'healthy': healthy
+            'health.cirrus_users_client': {
+                'healthy': false
+            },
+            'health.db_connection'      : {
+                'healthy': false
             }
         });
         next();

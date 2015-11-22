@@ -294,6 +294,12 @@ _getOptions = function (grunt) {
 };
 
 _arr = function (thing) {
+	if (typeof thing === 'string')
+	{
+		thing = thing.replace(/,\s*$/, '');
+		thing = thing.split(/\s*,\s*/g);
+	}
+//	console.log('_arr', thing);
 	thing = Array.isArray(thing) ? thing : [thing];
 	return thing;
 };

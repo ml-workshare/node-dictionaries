@@ -18,7 +18,7 @@ TBD
 
 In the project directory, launch:
 
-    sudo npm install -g nodemon forever jshint grunt
+    sudo npm install -g nodemon forever jshint grunt node-inspector
     npm install
 
 You'll need to do this once or when dependencies change.
@@ -73,16 +73,16 @@ or peruse the **Gruntfile.js** for other development related tasks like watching
 
 Test Driven Development:
 
-   grunt tdd --watch test
+    grunt tdd --watch test
    
 Will re-run the tests on every code change, but will not JSHINT so make sure you
 do a normal grunt before committing your code.
 
 Code Coverage:
 
-   grunt or grunt coverage
-   npm run coverage-view
-   npm run covereach
+    grunt or grunt coverage
+    npm run coverage-view
+    npm run covereach
 
 The grunt command will generate code coverage which you can view in the browser.
 We will set coverage points quite high and the build will fail if they are not met.
@@ -90,10 +90,18 @@ We will set coverage points quite high and the build will fail if they are not m
 The covereach command will run each test plan individually and show coverage. The
 module under test should be as close to 100% covered by the single test plan as is possible.
 
+## Debugging
+
+To visually debug without an IDE install node-inspector and use the Chrome
+or Opera debugger to debug your code.
+
+    npm run debugger
+    npm run debuggertest
+
 ## Performance
 
-   npm start
-   npm run performance
+    npm start
+    npm run performance
 
 will run a performance test against your server using the list file test/urls.lst
 

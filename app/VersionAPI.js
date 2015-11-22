@@ -1,10 +1,11 @@
 'use strict';
 
-var category = 'VersionAPI',
-    logger = require('./lib/config-log4js').getLogger(category),
-    debug = require('debug')(category),
+const category = 'VersionAPI',
     versionPath = '../config/version.json',
-    packagePath = '../package.json',
+    packagePath = '../package.json';
+
+var logger = require('./lib/config-log4js').getLogger(category),
+    debug = require('debug')(category),
     privates = {
         packageJSON: new WeakMap(),
         versionJSON: new WeakMap(),

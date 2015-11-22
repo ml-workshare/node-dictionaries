@@ -1,7 +1,11 @@
 'use strict';
 
-var category = 'Service',
-    log = require('./lib/config-log4js'), // must be first to setup
+const category = 'Service',
+    baseUrl = '/dictionaries/api/v1.0',
+    singleEntryUrl = baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
+    allUrl = baseUrl + '/:scope/:uuid/dictionaries.json';
+
+var log = require('./lib/config-log4js'), // must be first to setup
     logger = log.getLogger(category),
     debug = require('debug')(category),
     path = require('path'),
@@ -13,7 +17,6 @@ var category = 'Service',
     DictionaryAPI = require('./DictionaryAPI'),
     bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
-    baseUrl = '/dictionaries/api/v1.0',
     privates = {
         healthCheckAPI: new WeakMap(),
         versionAPI: new WeakMap(),
@@ -65,9 +68,6 @@ class Service {
             versionAPI.get(request, response);
         });
 
-        var singleEntryUrl = baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json';
-        var allUrl = baseUrl + '/:scope/:uuid/dictionaries.json';
-
         app.get(allUrl, function(request, response) {
             dictionaryAPI.getCollection(request, response);
         });
@@ -115,4 +115,3 @@ _initAPI = function (name, APIClass) {
 };
 
 module.exports = Service;
-

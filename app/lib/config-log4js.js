@@ -11,9 +11,11 @@
 
 'use strict';
 
+const category = 'config:log4js';
+
 var config,
     log4js = require('log4js'),
-    debug = require('debug')('config:log4js'),
+    debug = require('debug')(category),
     mkdirp = require('mkdirp'),
     _configureFromFile,
     _debugConfig;

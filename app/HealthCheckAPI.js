@@ -2,8 +2,9 @@
 
 'use strict';
 
-var category = 'HealthCheckAPI',
-    logger = require('./lib/config-log4js').getLogger(category),
+const category = 'HealthCheckAPI';
+
+var logger = require('./lib/config-log4js').getLogger(category),
     config = require('config'),
     debug = require('debug')(category),
     defaults = {

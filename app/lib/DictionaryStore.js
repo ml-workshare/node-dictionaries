@@ -1,9 +1,11 @@
 'use strict';
 
-var category = 'Dictionary',
-    logger = require('./config-log4js').getLogger(category),
+const category = 'Dictionary',
+    mongodb = 'localhost/dictionaries';
+
+var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    db = require('monk')('localhost/dictionaries');
+    db = require('monk')(mongodb);
 
 class DictionaryStore {
     constructor(options) {
@@ -33,7 +35,7 @@ class DictionaryStore {
                 db.get(self.scope).remove({ uuid, name });
                 fulfill(document);
             }).catch(function (error) {
-                reject(error);
+                reject(self.getErrorSync(error));
             });
         });
     }
@@ -56,7 +58,7 @@ class DictionaryStore {
                     return self._handleDocument(document);
                 }));
             }).error(function (err) {
-                reject(err);
+                reject(self.getErrorSync(err));
             });
         });
     }
@@ -82,7 +84,7 @@ class DictionaryStore {
             promise.success(function (document) {
                 fulfill(self._handleDocument(document, name));
             }).error(function (err) {
-                reject(err);
+                reject(self.getErrorSync(err));
             });
         });
     }

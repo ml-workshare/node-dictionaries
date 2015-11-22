@@ -6,6 +6,7 @@ var category = 'Service',
     debug = require('debug')(category),
     path = require('path'),
     http = require('http'),
+    util = require('util'),
     express = require('express'),
     VersionAPI = require('./VersionAPI'),
     HealthCheckAPI = require('./HealthCheckAPI'),
@@ -13,23 +14,29 @@ var category = 'Service',
     bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
     baseUrl = '/dictionaries/api/v1.0',
+    privates = {
+        healthCheckAPI: new WeakMap(),
+        versionAPI: new WeakMap(),
+        dictionaryAPI: new WeakMap()
+    },
     _initAPI;
 
 class Service {
 
-    constructor(apis) {
+    constructor (apis) {
         debug('constructor()');
         this.apis = apis || {};
         _initAPI.call(this, 'healthCheckAPI', HealthCheckAPI);
         _initAPI.call(this, 'versionAPI', VersionAPI);
         _initAPI.call(this, 'dictionaryAPI', DictionaryAPI);
+        delete this.apis;
     }
 
-    start(port) {
+    start (port) {
         var app = express(),
-            healthCheckAPI = this.healthCheckAPI,
-            dictionaryAPI = this.dictionaryAPI,
-            versionAPI = this.versionAPI,
+            healthCheckAPI = privates.healthCheckAPI.get(this),
+            dictionaryAPI = privates.dictionaryAPI.get(this),
+            versionAPI = privates.versionAPI.get(this),
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
         debug('start()', port);
@@ -84,12 +91,27 @@ class Service {
 
         return server;
     }
+
+    toString () {
+        return category + ' ' + JSON.stringify(this._privates);
+    }
+
+    get _privates () {
+        var self = this, _privates = {};
+
+        Object.keys(privates).forEach(function (key) {
+            _privates[key] =
+                JSON.parse(JSON.stringify(privates[key].get(self)));
+            void util;
+//            _privates[key] = util.inspect(privates[key].get(self));
+        });
+        return _privates;
+    }
 }
 
 _initAPI = function (name, APIClass) {
-    this[name] = this.apis[name]
-        ? this.apis[name]
-        : new APIClass();
+    var api = this.apis[name] ? this.apis[name] : new APIClass();
+    privates[name].set(this, api);
 };
 
 module.exports = Service;

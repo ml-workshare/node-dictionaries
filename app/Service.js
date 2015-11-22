@@ -7,27 +7,22 @@ var category = 'Service',
     path = require('path'),
     http = require('http'),
     express = require('express'),
-    bodyParser = require('body-parser'),
     VersionAPI = require('./VersionAPI'),
     HealthCheckAPI = require('./HealthCheckAPI'),
     DictionaryAPI = require('./DictionaryAPI'),
+    bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
-    baseUrl = '/dictionaries/api/v1.0';
+    baseUrl = '/dictionaries/api/v1.0',
+    _initAPI;
 
 class Service {
 
     constructor(apis) {
         debug('constructor()');
         this.apis = apis || {};
-        this._initAPI('healthCheckAPI', HealthCheckAPI);
-        this._initAPI('versionAPI', VersionAPI);
-        this._initAPI('dictionaryAPI', DictionaryAPI);
-    }
-
-    _initAPI(name, APIClass) {
-        this[name] = this.apis[name]
-            ? this.apis[name]
-            : new APIClass();
+        _initAPI.call(this, 'healthCheckAPI', HealthCheckAPI);
+        _initAPI.call(this, 'versionAPI', VersionAPI);
+        _initAPI.call(this, 'dictionaryAPI', DictionaryAPI);
     }
 
     start(port) {
@@ -37,7 +32,7 @@ class Service {
             versionAPI = this.versionAPI,
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
-        debug('start()');
+        debug('start()', port);
 
         // automatic access logs provided by logger
         app.use(log.connectLogger(
@@ -91,4 +86,11 @@ class Service {
     }
 }
 
+_initAPI = function (name, APIClass) {
+    this[name] = this.apis[name]
+        ? this.apis[name]
+        : new APIClass();
+};
+
 module.exports = Service;
+

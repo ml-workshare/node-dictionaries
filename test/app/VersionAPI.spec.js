@@ -30,6 +30,9 @@ describe('VersionAPI', function() {
         it('should format version information properly from JSON data', function() {
             this.versionAPI = new VersionAPI(GOOD_PACKAGE, GOOD_VERSION);
 
+            // console.error(this.versionAPI);
+            // console.error(this.versionAPI.toString());
+
             expect(this.versionAPI.status).to.be.equal(200);
             expect(this.versionAPI.formattedResponse)
                 .to.equal(GOOD_RESPONSE);

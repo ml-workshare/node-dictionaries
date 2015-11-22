@@ -4,14 +4,25 @@ var category = 'VersionAPI',
     logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category),
     versionPath = '../config/version.json',
-    packagePath = '../package.json';
+    packagePath = '../package.json',
+    privates = {
+        packageJSON: new WeakMap(),
+        versionJSON: new WeakMap(),
+        status: new WeakMap(),
+        formattedResponse: new WeakMap()
+    },
+    _getPackageJSON,
+    _getVersionJSON,
+    _getJSON,
+    _prepareVersion,
+    _formatResponse;
 
 class VersionAPI {
     constructor(mockPackage, mockVersion) {
         debug('constructor()');
-        this._getPackageJSON(mockPackage);
-        this._getVersionJSON(mockVersion);
-        this._prepareVersion();
+        _getPackageJSON.call(this, mockPackage);
+        _getVersionJSON.call(this, mockVersion);
+        _prepareVersion.call(this);
     }
 
     get(request, response) {
@@ -24,57 +35,84 @@ class VersionAPI {
             .send(this.formattedResponse);
     }
 
-    _getPackageJSON (mockPackage) {
-        try {
-            this.packageJSON = this._getJSON(mockPackage, packagePath);
-        }
-        catch (error) {
-            logger.warn(process.pid + ' ', error);
-        }
+    get status () {
+        return privates.status.get(this);
     }
 
-    _getVersionJSON (mockVersion) {
-        try {
-            this.versionJSON = this._getJSON(mockVersion, versionPath);
-        }
-        catch (error) {
-            this.versionJSON = {};
-            logger.warn(process.pid + ' ', error);
-        }
+    get formattedResponse () {
+        return privates.formattedResponse.get(this);
     }
 
-    _getJSON (pathOrObject, defaultPath) {
-        var path = (typeof pathOrObject === 'string') ? pathOrObject : defaultPath;
-        return typeof pathOrObject === 'object' ?
-            pathOrObject : require(path);
+    toString () {
+        return category + ' ' + JSON.stringify(this._privates);
     }
 
-    _prepareVersion () {
-        var result = {};
-        if (this.packageJSON && this.packageJSON.version) {
-            this.status = 200;
-            result['Application Version'] = this.packageJSON.version;
-            result['Application Name'] = 'api-location-node';
-            result['Build Time'] = this.versionJSON.buildTime;
-            result['Builder Number'] = this.versionJSON.builderNumber;
-            result['Build Id'] = this.versionJSON.buildId;
-            result['Job name'] = this.versionJSON.jobName;
-            result['Build tag'] = this.versionJSON.buildTag;
-            result['Git commit'] = this.versionJSON.gitCommit;
-        } else {
-            this.status = 500;
-            result.error = 'We are unable to determine the version';
-        }
-        this.formattedResponse = this._formatResponse(result);
-    }
+    get _privates () {
+        var self = this, _privates = {};
 
-    _formatResponse(keyValues) {
-        var result = [];
-        Object.keys(keyValues).forEach(function (key) {
-            result.push(key + '=' + keyValues[key]);
+        Object.keys(privates).forEach(function (key) {
+            _privates[key] =
+                JSON.parse(JSON.stringify(privates[key].get(self)));
         });
-        return result.join('\n');
+        return _privates;
     }
 }
+
+_getPackageJSON = function (mockPackage) {
+    try {
+        privates.packageJSON.set(this, _getJSON(mockPackage, packagePath));
+    }
+    catch (error) {
+        logger.warn(process.pid + ' ', error);
+    }
+};
+
+_getVersionJSON = function (mockVersion) {
+    try {
+        privates.versionJSON.set(this, _getJSON(mockVersion, versionPath));
+    }
+    catch (error) {
+        privates.versionJSON.set(this, {});
+        logger.warn(process.pid + ' ', error);
+    }
+};
+
+_getJSON = function (pathOrObject, defaultPath) {
+    var path = (typeof pathOrObject === 'string') ? pathOrObject : defaultPath;
+    return typeof pathOrObject === 'object' ?
+        pathOrObject : require(path);
+};
+
+_prepareVersion = function () {
+    var status,
+        result = {},
+        packageJSON = privates.packageJSON.get(this),
+        versionJSON = privates.versionJSON.get(this);
+
+    if (packageJSON && packageJSON.version) {
+        status = 200;
+        result['Application Version'] = packageJSON.version;
+        result['Application Name'] = 'api-location-node';
+        result['Build Time'] = versionJSON.buildTime;
+        result['Builder Number'] = versionJSON.builderNumber;
+        result['Build Id'] = versionJSON.buildId;
+        result['Job name'] = versionJSON.jobName;
+        result['Build tag'] = versionJSON.buildTag;
+        result['Git commit'] = versionJSON.gitCommit;
+    } else {
+        status = 500;
+        result.error = 'We are unable to determine the version';
+    }
+    privates.status.set(this, status);
+    privates.formattedResponse.set(this, _formatResponse(result));
+};
+
+_formatResponse = function (keyValues) {
+    var result = [];
+    Object.keys(keyValues).forEach(function (key) {
+        result.push(key + '=' + keyValues[key]);
+    });
+    return result.join('\n');
+};
 
 module.exports = VersionAPI;

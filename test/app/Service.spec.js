@@ -1,145 +1,153 @@
 'use strict';
 
-var supertest = require('supertest');
-
-var Service = require('../../app/Service');
-var VersionAPI = require('../../app/VersionAPI');
-var HealthCheckAPI = require('../../app/HealthCheckAPI');
-
 describe('Service', function() {
 
-    var app;
+    var HealthCheckAPI = require('../../app/HealthCheckAPI'),
+        DictionaryAPI = require('../../app/DictionaryAPI'),
+        VersionAPI = require('../../app/VersionAPI'),
+        Service = require('../../app/Service'),
+        debug = require('debug')('tests'),
+        supertest = require('supertest'),
+        _ = require('underscore'),
+        showLoggingWhileTesting = 'off',
+        testHelper;
+
+    before(function () {
+        _.extend(this, testHelper);
+    });
 
     afterEach(function() {
-        // jshint maxcomplexity: 2
-        if (app) {
-            app.close();
-        }
+        this.tearDown();
     });
 
     it('should construct with no parameters' , function() {
         var service = new Service();
         expect(service.healthCheckAPI).to.not.be.falsy;
         expect(service.versionAPI).to.not.be.falsy;
+        expect(service.dictionaryAPI).to.not.be.falsy;
+        expect(service.apis).to.be.deep.equals({});
     });
 
-/*
-    it('should call locationApi when no parameters are provided to api/countries', function(done) {
-        setLogging('off'); // suppress the display of the error log message
+    it('should call dictionaryAPI to GET the whole collection', function(asyncDone) {
 
-        var locationAPI = new LocationAPI();
-        var locationAPIGet = sinon.spy(locationAPI, 'get');
+        this.setupDictionaryTest('getCollection');
 
-        app = new Service({locationAPI: locationAPI}).start(1234);
-
-        supertest(app)
-            .get('/api/countries/')
-            .expect(function() {
-                setLogging('on'); // must be before the expect or you see no output
-                expect(locationAPIGet).to.have.been.called;
-            })
-            .end(done);
+        this.expectRouteIsConnected(
+            'get',
+            '/dictionaries/api/v1.0/users/current/dictionaries.json',
+            asyncDone
+        );
     });
-    
-    it('should call locationApi when no parameters are provided to api/countries.json', 
-        function(done) {
-            setLogging('off'); // suppress the display of the error log message
-    
-            var locationAPI = new LocationAPI();
-            var locationAPIGet = sinon.spy(locationAPI, 'get');
-    
-            app = new Service({locationAPI: locationAPI}).start(1234);
-    
-            supertest(app)
-                .get('/api/countries.json')
+
+    it('should call dictionaryAPI to GET a single dictionary entry', function(asyncDone) {
+
+        this.setupDictionaryTest('get');
+
+        this.expectRouteIsConnected(
+            'get',
+            '/dictionaries/api/v1.0/users/current/dictionaries/DICTNAME.json',
+            asyncDone
+        );
+    });
+
+    it('should call dictionaryAPI to SET a single dictionary entry', function(asyncDone) {
+
+        this.setupDictionaryTest('put');
+
+        this.expectRouteIsConnected(
+            'put',
+            '/dictionaries/api/v1.0/users/current/dictionaries/DICTNAME.json',
+            asyncDone
+        );
+    });
+
+    it('should call dictionaryAPI to DELETE a single dictionary entry', function(asyncDone) {
+
+        this.setupDictionaryTest('delete');
+
+        this.expectRouteIsConnected(
+            'delete',
+            '/dictionaries/api/v1.0/users/current/dictionaries/DICTNAME.json',
+            asyncDone
+        );
+    });
+
+    it('should call healthCheckAPI at /admin/healthCheck endpoint' , function(asyncDone) {
+
+        this.setupHealthCheckTest('get');
+
+        this.expectRouteIsConnected(
+            'get',
+            '/dictionaries/admin/healthCheck',
+            asyncDone
+        );
+    });
+
+    it('should call versionAPI at /admin/version endpoint' , function(asyncDone) {
+
+        this.setupVersionTest('get');
+
+        this.expectRouteIsConnected(
+            'get',
+            '/dictionaries/admin/version',
+            asyncDone
+        );
+    });
+
+    testHelper = {
+        setupDictionaryTest: function (method) {
+            this.setup('dictionaryAPI', DictionaryAPI, method);
+        },
+
+        setupVersionTest: function (method) {
+            this.setup('versionAPI', VersionAPI, method);
+        },
+
+        setupHealthCheckTest: function (method) {
+            this.setup('healthCheckAPI', HealthCheckAPI, method);
+        },
+
+        tearDown: function () {
+            return this.app && this.app.close();
+        },
+
+        setup: function (apiName, Api, method) {
+            setLogging(showLoggingWhileTesting);
+
+            var options = {},
+                anAPI = new Api();
+
+            this.routeHandler = this.createStub(anAPI, method);
+            options[apiName] = anAPI;
+            this.app = new Service(options)
+                .start(1234);
+        },
+
+        createStub: function (object, method) {
+            return sinon.stub(
+                object,
+                method,
+
+                function (request, response) {
+                    void request;
+                    debug('this.routeHandler stub');
+                    response.json({ 'stub': 'fake' });
+                });
+        },
+
+        expectRouteIsConnected: function (method, url, asyncDone) {
+            var self = this;
+
+            supertest(self.app)
+                [method](url)
                 .expect(function() {
                     setLogging('on'); // must be before the expect or you see no output
-                    expect(locationAPIGet).to.have.been.called;
+
+                    expect(self.routeHandler).to.have.been.called;
                 })
-                .end(done);
-    });
-
-    it('should call locationAPI at /api/countries' , function(done) {
-
-        setLogging('off'); // suppress the display of the error log message
-
-        var locationAPI = new LocationAPI();
-        var locationAPIGet = sinon.stub(locationAPI, 'get', function(req, res){
-            void req;
-            res.json({});
-        });
-
-        app = new Service({locationAPI: locationAPI}).start(1234);
-
-        supertest(app)
-            .get('/api/countries/128.1.1.231')
-            .expect(function() {
-                setLogging('on'); // must be before the expect or you see no output
-
-                expect(locationAPIGet).to.have.been.called;
-            })
-            .end(done);
-    });
-
-    it('should call locationAPI at /api/countries.json' , function(done) {
-
-        setLogging('off'); // suppress the display of the error log message
-
-        var locationAPI = new LocationAPI();
-        var locationAPIGet = sinon.stub(locationAPI, 'get', function(req, res){
-            void req;
-            res.json({});
-        });
-
-        app = new Service({locationAPI: locationAPI}).start(1234);
-
-        supertest(app)
-            .get('/api/countries.json/128.1.1.231')
-            .expect(function() {
-                setLogging('on'); // must be before the expect or you see no output
-                expect(locationAPIGet).to.have.been.called;
-            })
-            .end(done);
-    });
-*/
-    it('should call healthCheckAPI at /admin/healthCheck' , function(done) {
-
-        setLogging('off'); // suppress the display of the error log message
-
-        var healthCheckAPI = new HealthCheckAPI();
-        var healthCheckAPIGet = sinon.stub(healthCheckAPI, 'get', function(req, res){
-            void req;
-            res.json({});
-        });
-
-        app = new Service({healthCheckAPI: healthCheckAPI}).start(1234);
-
-        supertest(app)
-            .get('/admin/healthCheck')
-            .expect(function() {
-                setLogging('on'); // must be before the expect or you see no output
-                expect(healthCheckAPIGet).to.have.been.called;
-            })
-            .end(done);
-    });
-
-    it('should call versionAPI at /admin/version endpoint' , function(done) {
-
-        setLogging('off'); // suppress the display of the error log message
-
-        var versionAPI = new VersionAPI();
-        var versionAPIGet = sinon.spy(versionAPI, 'get');
-
-        app = new Service({versionAPI: versionAPI}).start(1234);
-
-        supertest(app)
-            .get('/admin/version')
-            .expect(function() {
-                setLogging('on'); // must be before the expect or you see no output
-                expect(versionAPIGet).to.have.been.called;
-            })
-            .end(done);
-    });
+                .end(asyncDone);
+        }
+    };
 
 });
 

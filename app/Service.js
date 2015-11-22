@@ -79,7 +79,7 @@ class Service {
         });
 
         app.delete(singleEntryUrl, function(request, response) {
-            dictionaryAPI.put(request, response);
+            dictionaryAPI.delete(request, response);
         });
 
         var server = http.createServer(app);

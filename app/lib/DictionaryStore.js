@@ -1,23 +1,23 @@
 'use strict';
 
-const category = 'Dictionary',
-    mongodb = 'localhost/dictionaries';
+const category = 'Dictionary';
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    db = require('monk')(mongodb);
+    getDb = require('./Database');
 
 class DictionaryStore {
     constructor(options) {
         debug('constructor()');
         this.uuid = options.uuid;
         this.scope = options.scope;
+        this.db = options.database || getDb();
     }
 
     willSet(name, value) {
         debug('willSet()', name, value);
         var uuid = this.uuid;
-        var dbPromise = db.get(this.scope)
+        var dbPromise = this.db.get(this.scope)
             .findAndModify(
                 { uuid, name },
                 { uuid, name, value },
@@ -32,7 +32,8 @@ class DictionaryStore {
             self = this;
         return new Promise(function (fulfill, reject) {
             self.willGet(name).then(function (document) {
-                db.get(self.scope).remove({ uuid, name });
+                debug('willDelete(), deleting documents: ', document);
+                self.db.get(self.scope).remove({ uuid, name });
                 fulfill(document);
             }).catch(function (error) {
                 reject(self.getErrorSync(error));
@@ -43,7 +44,7 @@ class DictionaryStore {
     willGet(name) {
         debug('willGet()', name);
         var uuid = this.uuid;
-        var dbPromise = db.get(this.scope).findOne({ uuid, name });
+        var dbPromise = this.db.get(this.scope).findOne({ uuid, name });
         return this._willHandleDocument(dbPromise, name);
     }
 
@@ -52,12 +53,12 @@ class DictionaryStore {
         var self = this;
         var mongoFilters = this._sanitizeFilters(filters);
         mongoFilters.uuid = this.uuid;
-        return new Promise(function (fulfill, reject) {
-            db.get(self.scope).find(mongoFilters).success(function (documents) {
-                fulfill(documents.map(function (document) {
+        return new Promise((fulfill, reject) => {
+            self.db.get(self.scope).find(mongoFilters).success((documents) => {
+                fulfill(documents.map((document) => {
                     return self._handleDocument(document);
                 }));
-            }).error(function (err) {
+            }).error((err) => {
                 reject(self.getErrorSync(err));
             });
         });
@@ -66,22 +67,23 @@ class DictionaryStore {
     _sanitizeFilters(filters) {
         var mongoFilters = {};
         if (!filters) {
+            debug('_sanitizeFilters(), result: ', mongoFilters);
             return mongoFilters;
         }
-        Object.keys(filters).forEach(function (key) {
+        Object.keys(filters).forEach((key) => {
             debug(key);
             mongoFilters['value.' + key] = filters[key];
         });
-        debug(mongoFilters);
-        debug(filters);
+        debug('_sanitizeFilters(), result: ', mongoFilters);
         return mongoFilters;
     }
 
     _willHandleDocument(promise, name) {
-        debug('_willHandleDocument()');
+        debug('_willHandleDocument() for name: ', name);
         var self = this;
         return new Promise(function (fulfill, reject) {
             promise.success(function (document) {
+                debug('_willHandleDocument(), got document: ', document);
                 fulfill(self._handleDocument(document, name));
             }).error(function (err) {
                 reject(self.getErrorSync(err));
@@ -90,6 +92,7 @@ class DictionaryStore {
     }
 
     _handleDocument(document, name) {
+        debug('_handleDocument(): ', document, name);
         if (document) {
             var result = document.value;
             result.name = name || document.name;

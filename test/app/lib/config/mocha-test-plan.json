@@ -29,6 +29,11 @@
             "[all]": "DEBUG"
         },
         "replaceConsole": true
+    },
+    "database": {
+        "host": "localhost",
+        "database": "dictionaries",
+        "port": 27017
     }
 
 }

@@ -1,7 +1,7 @@
 'use strict';
 var debug = require('debug')('test');
 
-describe.only('DictionaryStore', function () {
+describe('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         _ = require('underscore'),
         testHelper;

@@ -6,21 +6,18 @@ const category = 'VersionAPI',
 
 var logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category),
-    privates = {
-        packageJSON: new WeakMap(),
-        versionJSON: new WeakMap(),
-        status: new WeakMap(),
-        formattedResponse: new WeakMap()
-    },
+    privates = new WeakMap(),
     _getPackageJSON,
     _getVersionJSON,
     _getJSON,
     _prepareVersion,
-    _formatResponse;
+    _formatResponse,
+    _setPrivate;
 
 class VersionAPI {
     constructor(mockPackage, mockVersion) {
         debug('constructor()');
+        privates.set(this, {});
         _getPackageJSON.call(this, mockPackage);
         _getVersionJSON.call(this, mockVersion);
         _prepareVersion.call(this);
@@ -37,31 +34,31 @@ class VersionAPI {
     }
 
     get status () {
-        return privates.status.get(this);
+        return privates.get(this).status;
     }
 
     get formattedResponse () {
-        return privates.formattedResponse.get(this);
+        return privates.get(this).formattedResponse;
     }
 
     toString () {
-        return category + ' ' + JSON.stringify(this._privates);
+        return category + ' ' + JSON.stringify(privates.get(this));
     }
 
     get _privates () {
-        var self = this, _privates = {};
-
-        Object.keys(privates).forEach(function (key) {
-            _privates[key] =
-                JSON.parse(JSON.stringify(privates[key].get(self)));
-        });
-        return _privates;
+        return JSON.parse(JSON.stringify(privates.get(this)));
     }
 }
 
+_setPrivate = function (key, value) {
+    var _privates = privates.get(this);
+    _privates[key] = value;
+    return this;
+};
+
 _getPackageJSON = function (mockPackage) {
     try {
-        privates.packageJSON.set(this, _getJSON(mockPackage, packagePath));
+        _setPrivate.call(this, 'packageJSON', _getJSON(mockPackage, packagePath));
     }
     catch (error) {
         logger.warn(process.pid + ' ', error);
@@ -70,10 +67,10 @@ _getPackageJSON = function (mockPackage) {
 
 _getVersionJSON = function (mockVersion) {
     try {
-        privates.versionJSON.set(this, _getJSON(mockVersion, versionPath));
+        _setPrivate.call(this, 'versionJSON', _getJSON(mockVersion, versionPath));
     }
     catch (error) {
-        privates.versionJSON.set(this, {});
+        _setPrivate.call(this, 'versionJSON', {});
         logger.warn(process.pid + ' ', error);
     }
 };
@@ -87,8 +84,8 @@ _getJSON = function (pathOrObject, defaultPath) {
 _prepareVersion = function () {
     var status,
         result = {},
-        packageJSON = privates.packageJSON.get(this),
-        versionJSON = privates.versionJSON.get(this);
+        packageJSON = privates.get(this).packageJSON,
+        versionJSON = privates.get(this).versionJSON;
 
     if (packageJSON && packageJSON.version) {
         status = 200;
@@ -104,8 +101,8 @@ _prepareVersion = function () {
         status = 500;
         result.error = 'We are unable to determine the version';
     }
-    privates.status.set(this, status);
-    privates.formattedResponse.set(this, _formatResponse(result));
+    _setPrivate.call(this, 'status', status);
+    _setPrivate.call(this, 'formattedResponse', _formatResponse(result));
 };
 
 _formatResponse = function (keyValues) {

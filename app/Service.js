@@ -17,17 +17,15 @@ var log = require('./lib/config-log4js'), // must be first to setup
     DictionaryAPI = require('./DictionaryAPI'),
     bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
-    privates = {
-        healthCheckAPI: new WeakMap(),
-        versionAPI: new WeakMap(),
-        dictionaryAPI: new WeakMap()
-    },
-    _initAPI;
+    privates = new WeakMap(),
+    _initAPI,
+    _setPrivate;
 
 class Service {
 
     constructor (apis) {
         debug('constructor()');
+        privates.set(this, {});
         this.apis = apis || {};
         _initAPI.call(this, 'healthCheckAPI', HealthCheckAPI);
         _initAPI.call(this, 'versionAPI', VersionAPI);
@@ -37,9 +35,10 @@ class Service {
 
     start (port) {
         var app = express(),
-            healthCheckAPI = privates.healthCheckAPI.get(this),
-            dictionaryAPI = privates.dictionaryAPI.get(this),
-            versionAPI = privates.versionAPI.get(this),
+            _privates = privates.get(this),
+            healthCheckAPI = _privates.healthCheckAPI,
+            dictionaryAPI = _privates.dictionaryAPI,
+            versionAPI = _privates.versionAPI,
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
         debug('start()', port);
@@ -93,25 +92,25 @@ class Service {
     }
 
     toString () {
-        return category + ' ' + JSON.stringify(this._privates);
+        return category + ' ' + JSON.stringify(privates.get(this));
     }
 
     get _privates () {
-        var self = this, _privates = {};
-
-        Object.keys(privates).forEach(function (key) {
-            _privates[key] =
-                JSON.parse(JSON.stringify(privates[key].get(self)));
-            void util;
-//            _privates[key] = util.inspect(privates[key].get(self));
-        });
-        return _privates;
+        void util;
+        return JSON.parse(JSON.stringify(privates.get(this)));
+//        return util.inspect(privates.get(this));
     }
 }
 
 _initAPI = function (name, APIClass) {
     var api = this.apis[name] ? this.apis[name] : new APIClass();
-    privates[name].set(this, api);
+    _setPrivate.call(this, name, api);
+};
+
+_setPrivate = function (key, value) {
+    var _privates = privates.get(this);
+    _privates[key] = value;
+    return this;
 };
 
 module.exports = Service;

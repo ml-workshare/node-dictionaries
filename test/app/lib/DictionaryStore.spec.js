@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('DictionaryStore', function () {
+describe('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         accountsCollection = {},
         usersCollection = {

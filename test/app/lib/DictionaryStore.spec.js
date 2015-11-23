@@ -3,17 +3,28 @@ var debug = require('debug')('test');
 
 describe.only('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
-        _ = require('underscore'),
+        accountsCollection = {},
+        usersCollection = {
+            findOne: sinon.stub()
+        },
+        db = {
+            get: function (scope) {
+                /* jshint maxcomplexity: 3 */
+                if (scope === 'users') {
+                    return usersCollection;
+                } else if (scope === 'accounts') {
+                    return accountsCollection;
+                }
+            }
+        },
         testHelper;
 
-    before(function() {
-        _.extend(this, testHelper);
-    });
-
     beforeEach(function () {
+        this.uuid = 'fake-0129384701294190842';
         this.dictionary = new DictionaryStore({
             scope: 'users',
-            uuid: 'fake-0129384701294190842'
+            uuid: this.uuid,
+            database: db
         });
     });
 
@@ -24,200 +35,17 @@ describe.only('DictionaryStore', function () {
         });
     });
 
-    describe('willSet', function () {
-        it('should promise to set a dictionary value', function (asyncDone) {
-            /* jshint maxcomplexity: 3 */
-            var DATA = {
-                    name: 'GOTCHA',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                RESULT = {
-                    name: 'TEST_DICTIONARY',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                promise = this.dictionary.willSet(
-                    'TEST_DICTIONARY',
-                    DATA
-                );
-                this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to set another dictionary value', function (asyncDone) {
-            var DATA = {
-                    type: 'weird',
-                    payload: true,
-                    enabled: true,
-                    cuteness: -12
-                },
-                RESULT = {
-                    name: 'TEST_OTHER',
-                    type: 'weird',
-                    payload: true,
-                    enabled: true,
-                    cuteness: -12
-                },
-                promise = this.dictionary.willSet(
-                    'TEST_OTHER',
-                    DATA
-                );
-
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to set another value again, add, remove, ' +
-            'change keys', function (asyncDone) {
-            var DATA = {
-                    type: 'weirdulator',
-                    enabled: true,
-                    cuteness: -12,
-                    added: 'this'
-                },
-                RESULT = {
-                    name: 'TEST_OTHER',
-                    type: 'weirdulator',
-                    enabled: true,
-                    cuteness: -12,
-                    added: 'this'
-                },
-                promise = this.dictionary.willSet(
-                    'TEST_OTHER',
-                    DATA
-                );
-
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to set a dictionary value to be deleted', function (asyncDone) {
-            var DATA = {
-                    name: 'GOTCHA',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                RESULT = {
-                    name: 'TEST_DELETE',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                promise = this.dictionary.willSet(
-                    'TEST_DELETE',
-                    DATA
-                );
-
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-    });
-
-    describe('willDelete', function () {
-        it('should promise to delete a dictionary value', function (asyncDone) {
-            var RESULT = {
-                    name: 'TEST_DELETE',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                promise = this.dictionary.willDelete(
-                    'TEST_DELETE'
-                );
-
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should reject promise when dictionary not present', function (asyncDone) {
-            var promise = this.dictionary.willDelete(
-                'TEST_DELETE'
-            );
-
-            this.checkFulfillment(promise, null, asyncDone);
-        });
-    });
-
     describe('willGet', function () {
-        it('should promise to get a dictionary value', function (asyncDone) {
-            var RESULT = {
-                    name: 'TEST_DICTIONARY',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                },
-                promise = this.dictionary.willGet(
-                    'TEST_DICTIONARY'
-                );
+        it('should pass the correct parameters to usersCollection', function () {
+            var getPromise = this.dictionary.willGet('potato');
 
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to get a modified dictionary value', function (asyncDone) {
-            var RESULT = {
-                    name: 'TEST_OTHER',
-                    type: 'weirdulator',
-                    enabled: true,
-                    cuteness: -12,
-                    added: 'this'
-                },
-                promise = this.dictionary.willGet(
-                    'TEST_OTHER'
-                );
-
-            this.checkFulfillment(promise, RESULT, asyncDone);
-        });
-
-        it('should reject promise to get a dictionary ' +
-            'value that was deleted', function (asyncDone) {
-            var promise = this.dictionary.willGet(
-                    'TEST_DELETE'
-                );
-
-            this.checkFulfillment(promise, null, asyncDone);
-        });
-    });
-
-    describe('willGetCollection', function () {
-        it('should promise to get the whole collection', function (asyncDone) {
-            var RESULT = [{
-                    name: 'TEST_OTHER',
-                    type: 'weirdulator',
-                    enabled: true,
-                    cuteness: -12,
-                    added: 'this'
-                },{
-                    name: 'TEST_DICTIONARY',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                }],
-                promise = this.dictionary.willGetCollection();
-
-            this.checkFulfillmentSorted(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to get a filtered collection', function (asyncDone) {
-            var RESULT = [{
-                    name: 'TEST_DICTIONARY',
-                    payload: true,
-                    enabled: false,
-                    cuteness: 42
-                }],
-                promise = this.dictionary.willGetCollection({
-                    payload: true
-                });
-
-            this.checkFulfillmentSorted(promise, RESULT, asyncDone);
-        });
-
-        it('should promise to get filter with no match', function (asyncDone) {
-            var RESULT = [],
-                promise = this.dictionary.willGetCollection({
-                    payload: true,
-                    missing: true
-                });
-
-            this.checkFulfillmentSorted(promise, RESULT, asyncDone);
+            getPromise.then(() => {
+                expect(usersCollection.findOne).to.
+                    have.been.calledWith({
+                        uuid: this.uuid,
+                        name: 'potato'
+                    });
+            });
         });
     });
 
@@ -225,8 +53,7 @@ describe.only('DictionaryStore', function () {
         checkFulfillment: function (promise, expected, asyncDone) {
             promise.then(function (result) {
                     testAsync(asyncDone, function () {
-                        expect(result)
-                            .to.be.deep.equal(expected);
+                        expect(result).to.be.deep.equal(expected);
                     });
                 })
                 .catch(function (reason) {

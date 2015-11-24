@@ -17,52 +17,51 @@ var logger = require('./lib/config-log4js').getLogger(category),
     _sendResponse,
     _checkResponse;
 
-void logger;
 config.util.setModuleDefaults(category, defaults);
 
 class HealthCheckAPI {
-    constructor() {
+    constructor(dictionaryStore) {
         var self = this;
         debug('constructor()');
         self.dictionaryTestData = {};
         Object.keys(defaults).forEach(function (key) {
             self.dictionaryTestData[key] = config.get(category + '.' + key);
         });
+        this.dictionaryStore = dictionaryStore || new DictionaryStore(this.dictionaryTestData);
     }
 
-    get(request, response) {
+    get(request, response, next) {
         debug('get()', request.method, request.url);
         var self = this,
-            healthy = false,
-            dictionaryStore = new DictionaryStore(self.dictionaryTestData);
+            healthy = false;
 
-        dictionaryStore.willSet(self.dictionaryTestData.name,  self.dictionaryTestData.value)
+        self.dictionaryStore.willSet(self.dictionaryTestData.name,  self.dictionaryTestData.value)
             .then(function (result) {
                 healthy = _checkResponse.call(self, result, self.dictionaryTestData.value);
                 if (healthy) {
-                    dictionaryStore.willGet(
+                    self.dictionaryStore.willGet(
                         self.dictionaryTestData.name,  self.dictionaryTestData.value)
                         .then(function (result) {
-                            result.not = false;
                             healthy = _checkResponse.call(
                                 self, result, self.dictionaryTestData.value);
-                            _sendResponse.call(self, response, healthy);
+                            _sendResponse.call(self, healthy, response, next);
                         })
                         .catch(function () {
-                            _sendResponse.call(self, response, healthy);
+                            _sendResponse.call(self, healthy, response, next);
                         });
                 }
                 else {
-                    _sendResponse.call(self, response, healthy);
+                    _sendResponse.call(self, healthy, response, next);
                 }
             })
             .catch(function () {
-                _sendResponse.call(self, response, healthy);
+                _sendResponse.call(self, healthy, response, next);
             });
     }
 }
 
-_sendResponse = function (response, healthy) {
+_sendResponse = function (healthy, response, next) {
+    next = next || function () {};
     response.status(healthy ? 200 : 500);
 
     response.json({
@@ -73,6 +72,7 @@ _sendResponse = function (response, healthy) {
             'healthy': healthy
         }
     });
+    next(); // for the test plan!!
 };
 
 _checkResponse = function (actual, expected) {

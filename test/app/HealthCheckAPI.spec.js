@@ -1,6 +1,7 @@
 'use strict';
 
 var HealthCheckAPI = require('../../app/HealthCheckAPI'),
+    DictionaryStore = require('../../app/lib/DictionaryStore'),
     mockHttp = require('node-mocks-http'),
     config = require('config'),
     _ = require('underscore'),
@@ -13,7 +14,8 @@ describe('HealthCheckAPI', function () {
     });
 
     beforeEach(function() {
-        this.healthCheckAPI = new HealthCheckAPI();
+        this.dictionaryStore = new DictionaryStore(config.get('HealthCheckAPI'));
+        this.healthCheckAPI = new HealthCheckAPI(this.dictionaryStore);
     });
 
     describe.skip('constructor', function() {
@@ -47,7 +49,7 @@ describe('HealthCheckAPI', function () {
 
     });
 
-    describe.skip('get', function() {
+    describe('get', function() {
 
         it('should have response status 200 on successful healthcheck', function (asyncDone) {
 
@@ -61,7 +63,7 @@ describe('HealthCheckAPI', function () {
 
         });
 
-        it('should have healthy = true on successful healthcheck', function (asyncDone) {
+        it.skip('should have healthy = true on successful healthcheck', function (asyncDone) {
 
             var self = this;
             self.mockSuccessLookup();
@@ -70,8 +72,11 @@ describe('HealthCheckAPI', function () {
                 function () {
                     expect(self.response._isJSON()).to.be.true;
                     expect(JSON.parse(self.response._getData())).to.be.deep.equal({
-                        database: {
-                            healthy: true
+                        'health.cirrus_users_client': {
+                            'healthy': true
+                        },
+                        'health.db_connection'      : {
+                            'healthy': true
                         }
                     });
                 });
@@ -79,10 +84,10 @@ describe('HealthCheckAPI', function () {
         });
 
         it('should have response status 500 on ' +
-            'unsuccessful healthcheck', function (asyncDone) {
+            'unsuccessful healthcheck dictionary get fails', function (asyncDone) {
 
             var self = this;
-            self.mockFailedLookup();
+            self.mockFailedLookupGet();
 
             self.testHealthCheck(asyncDone,
                 function () {
@@ -90,17 +95,44 @@ describe('HealthCheckAPI', function () {
                 });
         });
 
-        it('should have healthy = false on unsuccessful healthcheck', function (asyncDone) {
+        it('should have response status 500 on ' +
+            'unsuccessful healthcheck dictionary set fails', function (asyncDone) {
 
             var self = this;
-            self.mockFailedLookup();
+            self.mockFailedLookupSet();
+
+            self.testHealthCheck(asyncDone,
+                function () {
+                    expect(self.response.statusCode).to.be.equal(500);
+                });
+        });
+
+        it.skip('should have response status 500 on ' +
+            'unsuccessful cirrus lookup', function (asyncDone) {
+
+            var self = this;
+            self.mockSuccessDictionaryLookup();
+
+            self.testHealthCheck(asyncDone,
+                function () {
+                    expect(self.response.statusCode).to.be.equal(500);
+                });
+        });
+
+        it('should have healthy = false on unsuccessful cirrus healthcheck', function (asyncDone) {
+
+            var self = this;
+            self.mockSuccessDictionaryLookup();
 
             self.testHealthCheck(asyncDone,
                 function () {
                     expect(self.response._isJSON()).to.be.true;
                     expect(JSON.parse(self.response._getData())).to.be.deep.equal({
-                        database: {
-                            healthy: false
+                        'health.cirrus_users_client': {
+                            'healthy': false
+                        },
+                        'health.db_connection'      : {
+                            'healthy': true
                         }
                     });
                 });
@@ -172,19 +204,38 @@ testHelper = {
     },
 
     mockSuccessLookup: function () {
-        sinon.stub(this.locationFinder, 'willLookup').resolves([{
-            'country': {
-                'iso_code': 'ZA'
-            }
-        }]);
+        sinon.stub(this.dictionaryStore, 'willSet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: true }
+        );
+        sinon.stub(this.dictionaryStore, 'willGet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: true }
+        );
+        // TODO cirrus mocks
     },
 
-    mockFailedLookup: function () {
-        sinon.stub(this.locationFinder, 'willLookup').resolves([{
-            'country': {
-                'iso_code': 'US'
-            }
-        }]);
+    mockSuccessDictionaryLookup: function () {
+        this.mockSuccessLookup();
+        // TODO cirrus mocks
+    },
+
+    mockFailedLookupGet: function () {
+        sinon.stub(this.dictionaryStore, 'willSet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: true }
+        );
+        sinon.stub(this.dictionaryStore, 'willGet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: 'oops' }
+        );
+        // TODO cirrus mocks
+    },
+
+    mockFailedLookupSet: function () {
+        sinon.stub(this.dictionaryStore, 'willSet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: 'oops' }
+        );
+        sinon.stub(this.dictionaryStore, 'willGet').resolves(
+            { name: 'TEST_HEALTHCHECK', healthy: 'oops-why-are-we-here' }
+        );
+        // TODO cirrus mocks
     }
 
 };

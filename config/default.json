@@ -11,8 +11,10 @@
 		"replaceConsole": true
 	},
 	"DictionaryDatabase": {
-		"host": "google.com",
-		"database": "NOTdictionaries",
+		"host": "localhost",
+		"database": "dictionaries",
+		"nothost": "google.com",
+		"notdatabase": "NOTdictionaries",
 		"port": 27017
 	}
 }

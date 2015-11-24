@@ -14,6 +14,7 @@ var logger = require('./lib/config-log4js').getLogger(category),
         name: 'TEST_HEALTHCHECK',
         value: { name: 'TEST_HEALTHCHECK', healthy: true }
     },
+    _willCheckDictionaryHealth,
     _sendResponse,
     _checkResponse;
 
@@ -32,33 +33,37 @@ class HealthCheckAPI {
 
     get(request, response, next) {
         debug('get()', request.method, request.url);
-        var self = this,
-            healthy = false;
 
-        self.dictionaryStore.willSet(self.dictionaryTestData.name,  self.dictionaryTestData.value)
-            .then(function (result) {
-                healthy = _checkResponse.call(self, result, self.dictionaryTestData.value);
-                if (healthy) {
-                    self.dictionaryStore.willGet(
-                        self.dictionaryTestData.name,  self.dictionaryTestData.value)
-                        .then(function (result) {
-                            healthy = _checkResponse.call(
-                                self, result, self.dictionaryTestData.value);
-                            _sendResponse.call(self, healthy, response, next);
-                        })
-                        .catch(function () {
-                            _sendResponse.call(self, healthy, response, next);
-                        });
-                }
-                else {
-                    _sendResponse.call(self, healthy, response, next);
-                }
-            })
-            .catch(function () {
-                _sendResponse.call(self, healthy, response, next);
-            });
+        _willCheckDictionaryHealth.call(this, response, next);
     }
 }
+
+_willCheckDictionaryHealth = function (response, next) {
+    var self = this,
+        healthy = false;
+    self.dictionaryStore.willSet(self.dictionaryTestData.name,  self.dictionaryTestData.value)
+        .then(function (result) {
+            healthy = _checkResponse.call(self, result, self.dictionaryTestData.value);
+            if (healthy) {
+                self.dictionaryStore.willGet(
+                    self.dictionaryTestData.name,  self.dictionaryTestData.value)
+                    .then(function (result) {
+                        healthy = _checkResponse.call(
+                            self, result, self.dictionaryTestData.value);
+                        _sendResponse.call(self, healthy, response, next);
+                    })
+                    .catch(function () {
+                        _sendResponse.call(self, healthy, response, next);
+                    });
+            }
+            else {
+                _sendResponse.call(self, healthy, response, next);
+            }
+        })
+        .catch(function () {
+            _sendResponse.call(self, healthy, response, next);
+        });
+};
 
 _sendResponse = function (healthy, response, next) {
     next = next || function () {};

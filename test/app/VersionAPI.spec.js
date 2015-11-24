@@ -30,8 +30,14 @@ describe('VersionAPI', function() {
         it('should format version information properly from JSON data', function() {
             this.versionAPI = new VersionAPI(GOOD_PACKAGE, GOOD_VERSION);
 
-            // console.error(this.versionAPI);
-            // console.error(this.versionAPI.toString());
+            /*
+                console.error(VersionAPI.name, 'class name');
+                console.error(this.versionAPI.constructor.name, 'class name from instance');
+                console.error(this.versionAPI, 'cannot see privates');
+                console.error(this.versionAPI.toString()); // unless you do it yourself...
+                console.error(this.versionAPI.toDebugString());
+                console.error(this.versionAPI._privates);
+            */
 
             expect(this.versionAPI.status).to.be.equal(200);
             expect(this.versionAPI.formattedResponse)

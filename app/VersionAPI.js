@@ -45,6 +45,11 @@ class VersionAPI {
         return category + ' ' + JSON.stringify(privates.get(this));
     }
 
+    toDebugString () {
+        var util = require('util');
+        return category + ' ' + util.inspect(privates.get(this), true, null, true);
+    }
+
     get _privates () {
         return JSON.parse(JSON.stringify(privates.get(this)));
     }

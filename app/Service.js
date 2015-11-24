@@ -98,7 +98,7 @@ class Service {
     get _privates () {
         void util;
         return JSON.parse(JSON.stringify(privates.get(this)));
-//        return util.inspect(privates.get(this));
+//        return util.inspect(privates.get(this), true, null, true);
     }
 }
 

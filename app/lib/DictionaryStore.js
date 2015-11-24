@@ -31,12 +31,12 @@ class DictionaryStore {
         debug('willDelete()', name);
         var uuid = this.uuid,
             self = this;
-        return new Promise(function (fulfill, reject) {
-            self.willGet(name).then(function (document) {
+        return new Promise((fulfill, reject) => {
+            self.willGet(name).then((document) => {
                 debug('willDelete(), deleting documents: ', document);
                 self.db.get(self.scope).remove({ uuid, name });
                 fulfill(document);
-            }).catch(function (error) {
+            }, (error) => {
                 reject(self.getErrorSync(error));
             });
         });
@@ -55,11 +55,11 @@ class DictionaryStore {
         var mongoFilters = this._sanitizeFilters(filters);
         mongoFilters.uuid = this.uuid;
         return new Promise((fulfill, reject) => {
-            self.db.get(self.scope).find(mongoFilters).success((documents) => {
+            self.db.get(self.scope).find(mongoFilters).then((documents) => {
                 fulfill(documents.map((document) => {
                     return self._handleDocument(document);
                 }));
-            }).error((err) => {
+            }, (err) => {
                 reject(self.getErrorSync(err));
             });
         });
@@ -82,11 +82,12 @@ class DictionaryStore {
     _willHandleDocument(promise, name) {
         debug('_willHandleDocument() for name: ', name);
         var self = this;
-        return new Promise(function (fulfill, reject) {
-            promise.success(function (document) {
+        return new Promise((fulfill, reject) => {
+            promise.then((document) => {
                 debug('_willHandleDocument(), got document: ', document);
                 fulfill(self._handleDocument(document, name));
-            }).error(function (err) {
+            }, (err) => {
+                debug('Promise rejected with: ', err);
                 reject(self.getErrorSync(err));
             });
         });

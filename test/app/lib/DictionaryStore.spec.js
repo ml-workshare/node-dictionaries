@@ -1,10 +1,6 @@
 'use strict';
 
-var MPromise = require('monk').Promise;
-require('sinon-as-promised')(MPromise);
-var debug = require('debug')('test');
-
-describe.only('DictionaryStore', function () {
+describe('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         accountsCollection = {},
         usersCollection = {
@@ -20,7 +16,6 @@ describe.only('DictionaryStore', function () {
                 }
             }
         };
-
 
     beforeEach(function () {
         this.uuid = 'fake-0129384701294190842';
@@ -39,30 +34,52 @@ describe.only('DictionaryStore', function () {
     });
 
     describe('willGet', function () {
-        it('should pass the correct parameters to usersCollection', function () {
-            var getPromise = this.dictionary.willGet('potato');
-
-            getPromise.then(() => {
-                expect(usersCollection.findOne).to.
-                    have.been.calledWith({
-                        uuid: this.uuid,
-                        name: 'potato'
-                    });
-            });
-        });
+        var document = {
+            name: 'potato',
+            value: { a: 'value' },
+            _id: '5642217cf9abdbd528bc1448'
+        };
 
         it('should pass the correct parameters to usersCollection', function (done) {
-            var document = { name: 'blah', value: { a: 'value' }, _id: '5642217cf9abdbd528bc1448' };
-
             usersCollection.findOne.resolves(document);
-            debug(usersCollection.findOne);
+
+            this.dictionary.willGet('potato').then(() => {
+                testAsync(done, () => {
+                    expect(usersCollection.findOne).to.
+                        have.been.calledWith({
+                            uuid: this.uuid,
+                            name: 'potato'
+                        });
+                });
+            }, done);
+        });
+
+        it('should act as a promise and return the value', function (done) {
+            usersCollection.findOne.resolves(document);
+
+            var expectedResult = { name: 'potato', a: 'value' };
 
             this.dictionary.willGet('potato').then((doc) => {
-                debug(doc);
-                debug(document);
-                expect(doc).to.deep.equal(document);
-                done();
-            });
+                testAsync(done, () => {
+                    expect(doc).to.deep.equal(expectedResult);
+                });
+            }, done);
+        });
+
+        it('should reject promise when mongo fails to retrieve a result', function (done) {
+
+            var errorMessage = 'errorMessage';
+
+            usersCollection.findOne.rejects(errorMessage);
+
+            this.dictionary.willGet('potato').then(() => {
+                    done(new Error('Fulfilled when should have failed'));
+                }).catch(function (error) {
+                    testAsync(done, () => {
+                        expect(error.error_code).to.be.equal('die');
+                        expect(error.error_msg.message).to.be.equal(errorMessage);
+                    });
+                });
         });
     });
 });

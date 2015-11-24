@@ -1,6 +1,7 @@
 'use strict';
 
-const category = 'Dictionary';
+const category = 'DictionaryStore',
+    mongodb = 'localhost/dictionaries';
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),

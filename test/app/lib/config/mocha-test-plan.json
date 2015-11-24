@@ -30,7 +30,8 @@
         },
         "replaceConsole": true
     },
-    "database": {
+
+    "DictionaryDatabase": {
         "host": "localhost",
         "database": "dictionaries",
         "port": 27017

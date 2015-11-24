@@ -14,6 +14,13 @@ class DictionaryAPI {
 
     constructor() {
         debug('constructor');
+        // MUSTDO ENSURE WE HAVE A DATABASE CONNECTION AT STARTUP
+        // I GET NO ERROR IF DB DOESN'T EXIST
+        // try google.com as hostname for example.
+        new DictionaryStore({
+            scope: 'users',
+            uuid: 'databaseinitialisation'
+        });
     }
 
     get(request, response) {

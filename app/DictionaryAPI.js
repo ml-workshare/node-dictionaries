@@ -17,10 +17,11 @@ class DictionaryAPI {
         // MUSTDO ENSURE WE HAVE A DATABASE CONNECTION AT STARTUP
         // I GET NO ERROR IF DB DOESN'T EXIST
         // try google.com as hostname for example.
-        new DictionaryStore({
+        var initDatabaseConnectionOnStartup = new DictionaryStore({
             scope: 'users',
             uuid: 'databaseinitialisation'
         });
+        void initDatabaseConnectionOnStartup;
     }
 
     get(request, response) {

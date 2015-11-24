@@ -59,12 +59,15 @@ global.swallow = function (thrower) {
 };
 
 global.testAsync = function (asyncDone, thrower) {
+    var reasonForFailureIfAny;
     try {
         thrower();
-        asyncDone();
     }
     catch (error) {
-        asyncDone(new Error(error));
+        reasonForFailureIfAny = new Error(error);
+    }
+    finally {
+        asyncDone(reasonForFailureIfAny);
     }
 };
 

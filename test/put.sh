@@ -27,12 +27,13 @@ echo GET $N $Q
 curl -H "Cookie: $COOKIE;" "$Q" > $OUT 2> /dev/null
 $PRETTY $OUT
 
-echo " "
-echo "DELETE ========================================="
-N=TEST_DICTIONARY
-Q="$BASE/$N.json"
-echo DELETE $N $Q
-curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
-$PRETTY $OUT
+
+#echo " "
+#echo "DELETE ========================================="
+#N=TEST_DICTIONARY
+#Q="$BASE/$N.json"
+#echo DELETE $N $Q
+#curl -H "Cookie: $COOKIE;" -H 'Content-Type: application/json' -X DELETE "$Q" > $OUT 2> /dev/null
+#$PRETTY $OUT
 
 rm get.out

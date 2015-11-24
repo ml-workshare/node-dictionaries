@@ -16,5 +16,11 @@
 		"nothost": "google.com",
 		"notdatabase": "NOTdictionaries",
 		"port": 27017
+	},
+	"HealthCheckAPI": {
+		"scope": "account",
+		"uuid": "Test.Test.Test.Test",
+		"name": "TEST_HEALTHCHECK",
+		"value": { "name": "TEST_HEALTHCHECK", "window": false, "config": true }
 	}
 }

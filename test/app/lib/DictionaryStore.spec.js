@@ -1,6 +1,10 @@
 'use strict';
 
-describe('DictionaryStore', function () {
+var MPromise = require('monk').Promise;
+require('sinon-as-promised')(MPromise);
+var debug = require('debug')('test');
+
+describe.only('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         accountsCollection = {},
         usersCollection = {
@@ -17,6 +21,7 @@ describe('DictionaryStore', function () {
             }
         };
 
+
     beforeEach(function () {
         this.uuid = 'fake-0129384701294190842';
         this.dictionary = new DictionaryStore({
@@ -29,7 +34,7 @@ describe('DictionaryStore', function () {
     describe('constructor', function () {
         it('should construct with scope and user', function () {
             expect(this.dictionary.scope).to.be.equal('users');
-            expect(this.dictionary.uuid).to.be.equal('fake-0129384701294190842');
+            expect(this.dictionary.uuid).to.be.equal(this.uuid);
         });
     });
 
@@ -43,6 +48,20 @@ describe('DictionaryStore', function () {
                         uuid: this.uuid,
                         name: 'potato'
                     });
+            });
+        });
+
+        it('should pass the correct parameters to usersCollection', function (done) {
+            var document = { name: 'blah', value: { a: 'value' }, _id: '5642217cf9abdbd528bc1448' };
+
+            usersCollection.findOne.resolves(document);
+            debug(usersCollection.findOne);
+
+            this.dictionary.willGet('potato').then((doc) => {
+                debug(doc);
+                debug(document);
+                expect(doc).to.deep.equal(document);
+                done();
             });
         });
     });

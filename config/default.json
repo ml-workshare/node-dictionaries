@@ -9,5 +9,10 @@
 			}
 		}],
 		"replaceConsole": true
+	},
+	"DictionaryDatabase": {
+		"host": "google.com",
+		"database": "NOTdictionaries",
+		"port": 27017
 	}
 }

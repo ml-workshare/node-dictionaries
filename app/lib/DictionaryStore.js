@@ -1,11 +1,10 @@
 'use strict';
 
-const category = 'DictionaryStore',
-    mongodb = 'localhost/dictionaries';
+const category = 'DictionaryStore';
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    getDb = require('./Database');
+    getDb = require('./DictionaryDatabase');
 
 class DictionaryStore {
     constructor(options) {
@@ -13,6 +12,7 @@ class DictionaryStore {
         this.uuid = options.uuid;
         this.scope = options.scope;
         this.db = options.database || getDb();
+        this.db.get('users');
     }
 
     willSet(name, value) {

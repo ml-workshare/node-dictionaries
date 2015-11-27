@@ -1,7 +1,6 @@
 'use strict';
 
-const category = 'DictionaryStore',
-    numRegex = /^(?=\.*)[\d.]+$/;
+const category = 'DictionaryStore';
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
@@ -87,7 +86,7 @@ class DictionaryStore {
             return { '$in': [true, 'true'] };
         } else if ('false' === value) {
             return { '$in': [false, 'false'] };
-        } else if (numRegex.test(value)) {
+        } else if (!isNaN(parseFloat(value))) {
             return { '$in': [parseFloat(value), value] };
         } else {
             return value;

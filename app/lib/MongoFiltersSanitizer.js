@@ -9,7 +9,7 @@ class MongoFiltersSanitizer {
         var mongoFilters = {},
             self = this;
         if (!filters) {
-            debug('sanitize(), result: ', mongoFilters);
+            debug('sanitize()', 'result', mongoFilters);
             return mongoFilters;
         }
         Object.keys(filters).forEach((key) => {
@@ -17,7 +17,7 @@ class MongoFiltersSanitizer {
             var value = filters[key];
             mongoFilters['value.' + key] = self._sanitizeValue(value);
         });
-        debug('sanitize(), result: ', mongoFilters);
+        debug('sanitize()', 'result', mongoFilters);
         return mongoFilters;
     }
 

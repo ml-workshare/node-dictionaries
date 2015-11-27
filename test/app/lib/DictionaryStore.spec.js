@@ -1,7 +1,6 @@
 'use strict';
 
-var debug = require('debug')('test');
-describe.only('DictionaryStore', function () {
+describe('DictionaryStore', function () {
     var DictionaryStore = require('../../../app/lib/DictionaryStore'),
         uuid = 'potato-chimichanga',
         accountsCollection = {},
@@ -101,7 +100,6 @@ describe.only('DictionaryStore', function () {
         it('should pass the correct parameters to usersCollection', function (done) {
             var query = { uuid, name },
                 insert = { uuid, name, value };
-            debug(insert);
 
             usersCollection.findAndModify.resolves(document);
 

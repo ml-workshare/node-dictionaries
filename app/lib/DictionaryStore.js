@@ -4,7 +4,8 @@ const category = 'DictionaryStore';
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
-    getDb = require('./DictionaryDatabase');
+    getDb = require('./DictionaryDatabase'),
+    MongoFiltersSanitizer = require('./MongoFiltersSanitizer');
 
 class DictionaryStore {
     constructor(options) {
@@ -12,7 +13,7 @@ class DictionaryStore {
         this.uuid = options.uuid;
         this.scope = options.scope;
         this.db = options.database || getDb();
-        this.db.get('users');
+        this.sanitizer = new MongoFiltersSanitizer();
     }
 
     willSet(name, value) {
@@ -52,7 +53,7 @@ class DictionaryStore {
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
         var self = this;
-        var mongoFilters = this._sanitizeFilters(filters);
+        var mongoFilters = this.sanitizer.sanitize(filters);
         mongoFilters.uuid = this.uuid;
         return new Promise((fulfill, reject) => {
             self.db.get(self.scope).find(mongoFilters).then((documents) => {
@@ -63,34 +64,6 @@ class DictionaryStore {
                 reject(self.getErrorSync(err));
             });
         });
-    }
-
-    _sanitizeFilters(filters) {
-        var mongoFilters = {},
-            self = this;
-        if (!filters) {
-            debug('_sanitizeFilters(), result: ', mongoFilters);
-            return mongoFilters;
-        }
-        Object.keys(filters).forEach((key) => {
-            debug('_sanitizeFilters()', 'sanitizing key', key);
-            var value = filters[key];
-            mongoFilters['value.' + key] = self._sanitizeValue(value);
-        });
-        debug('_sanitizeFilters(), result: ', mongoFilters);
-        return mongoFilters;
-    }
-
-    _sanitizeValue(value) {
-        if ('true' === value) {
-            return { '$in': [true, 'true'] };
-        } else if ('false' === value) {
-            return { '$in': [false, 'false'] };
-        } else if (!isNaN(parseFloat(value))) {
-            return { '$in': [parseFloat(value), value] };
-        } else {
-            return value;
-        }
     }
 
     _willHandleDocument(promise, name) {

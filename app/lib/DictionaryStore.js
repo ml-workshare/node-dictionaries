@@ -1,6 +1,7 @@
 'use strict';
 
-const category = 'DictionaryStore';
+const category = 'DictionaryStore',
+    numRegex = /^(?=\.*)[\d.]+$/;
 
 var logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
@@ -66,17 +67,31 @@ class DictionaryStore {
     }
 
     _sanitizeFilters(filters) {
-        var mongoFilters = {};
+        var mongoFilters = {},
+            self = this;
         if (!filters) {
             debug('_sanitizeFilters(), result: ', mongoFilters);
             return mongoFilters;
         }
         Object.keys(filters).forEach((key) => {
-            debug(key);
-            mongoFilters['value.' + key] = filters[key];
+            debug('_sanitizeFilters()', 'sanitizing key', key);
+            var value = filters[key];
+            mongoFilters['value.' + key] = self._sanitizeValue(value);
         });
         debug('_sanitizeFilters(), result: ', mongoFilters);
         return mongoFilters;
+    }
+
+    _sanitizeValue(value) {
+        if ('true' === value) {
+            return { '$in': [true, 'true'] };
+        } else if ('false' === value) {
+            return { '$in': [false, 'false'] };
+        } else if (numRegex.test(value)) {
+            return { '$in': [parseFloat(value), value] };
+        } else {
+            return value;
+        }
     }
 
     _willHandleDocument(promise, name) {

@@ -42,7 +42,7 @@ var _arr, _getOptions, build;
 
 build = function (grunt) {
 
-	var opts = _getOptions(grunt),
+	const opts = _getOptions(grunt),
 		watch = opts.watch,
 		coverLimit = opts.coverLimit,
 		coverAllLimit = opts.coverAllLimit,
@@ -265,8 +265,9 @@ _getOptions = function (grunt) {
 			branches:    90,
 			lines:       90,
 			statements:  90
-		},
-		plans = _arr(grunt.option('plan') ||
+		};
+
+	const plans = _arr(grunt.option('plan') ||
 			grunt.option('plans') ||
 			['test/**/*.spec.js']),
 		also  = _arr(grunt.option('also') || []),

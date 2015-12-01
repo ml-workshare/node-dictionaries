@@ -17,6 +17,7 @@ const category = 'HealthCheckAPI',
 var _willCheckDictionarySetHealth,
     _willCheckDictionaryGetHealth,
     _willCheckCirrusHealth,
+    _getPromiseToCheckResults,
     _sendHealthResponse,
     _sendResponse,
     _checkResponse;
@@ -80,7 +81,7 @@ _willCheckCirrusHealth = function () {
     return new Promise(function (fulfill) {
         process.nextTick(function () {
             debug('_willCheckCirrusHealth fulfill');
-            fulfill(Math.random() < 0.5);
+            fulfill(false); // TODO implement
         });
     });
 };
@@ -102,16 +103,7 @@ _willCheckDictionarySetHealth = function () {
                 });
         }),
 
-        promiseToCheckResults = new Promise(function (fulfill) {
-            promiseToSetDictionary
-                .then(function (result) {
-                    debug('promiseToCheckResults set fulfill', result);
-                    const healthy = _checkResponse.call(
-                        self, result, self.dictionaryTestData.value);
-                    debug('promiseToCheckResults set fulfill', healthy);
-                    fulfill(healthy);
-                });
-        });
+        promiseToCheckResults = _getPromiseToCheckResults.call(this, promiseToSetDictionary);
 
     return promiseToCheckResults;
 };
@@ -132,17 +124,23 @@ _willCheckDictionaryGetHealth = function () {
                 });
         }),
 
-        promiseToCheckResults = new Promise(function (fulfill) {
-            promiseToGetDictionary
-                .then(function (result) {
-                    debug('promiseToCheckResults get fulfill', result);
-                    const healthy = _checkResponse.call(
-                        self, result, self.dictionaryTestData.value);
-                    fulfill(healthy);
-                });
-        });
+        promiseToCheckResults = _getPromiseToCheckResults.call(this, promiseToGetDictionary);
 
     return promiseToCheckResults;
+};
+
+_getPromiseToCheckResults = function (dependentPromise) {
+    const self = this;
+    return new Promise(function (fulfill) {
+        dependentPromise
+            .then(function (result) {
+                debug('promiseToCheckResults set fulfill', result);
+                const healthy = _checkResponse.call(
+                    self, result, self.dictionaryTestData.value);
+                debug('promiseToCheckResults set fulfill', healthy);
+                fulfill(healthy);
+            });
+    });
 };
 
 _sendHealthResponse = function (response, json, next) {

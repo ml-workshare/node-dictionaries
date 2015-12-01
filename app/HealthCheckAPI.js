@@ -2,9 +2,8 @@
 
 'use strict';
 
-const category = 'HealthCheckAPI';
-
-var logger = require('./lib/config-log4js').getLogger(category),
+const category = 'HealthCheckAPI',
+    logger = require('./lib/config-log4js').getLogger(category),
     config = require('config'),
     debug = require('debug')(category),
     DictionaryStore = require('./lib/DictionaryStore'),
@@ -13,10 +12,10 @@ var logger = require('./lib/config-log4js').getLogger(category),
         uuid: 'Test.Test.Test.Test',
         name: 'TEST_HEALTHCHECK',
         value: { name: 'TEST_HEALTHCHECK', healthy: true }
-    },
-    _willCheckDictionarySetHealth,
+    };
+
+var _willCheckDictionarySetHealth,
     _willCheckDictionaryGetHealth,
-    _willCheckDictionaryHealth1,
     _willCheckCirrusHealth,
     _sendHealthResponse,
     _sendResponse,
@@ -26,7 +25,7 @@ config.util.setModuleDefaults(category, defaults);
 
 class HealthCheckAPI {
     constructor(dictionaryStore) {
-        var self = this;
+        const self = this;
         debug('constructor()');
         self.dictionaryTestData = {};
         Object.keys(defaults).forEach(function (key) {
@@ -36,16 +35,15 @@ class HealthCheckAPI {
     }
 
     get(request, response, next) {
-        var self = this;
         debug('get()', request.method, request.url);
+        const self = this,
+            results = [], responseJSON = {
+                'health.cirrus_users_client': { healthy: false },
+                'health.db_connection'      : { healthy: false }
+            };
 
-        var results = [], responseJSON = {
-            'health.cirrus_users_client': { healthy: false },
-            'health.db_connection'      : { healthy: false }
-        };
-
-        function eventually (healthy) {
-            debug('eventually', results.length);
+        function eventually (where, healthy) {
+            debug('eventually', where, results.length);
             results.push(healthy);
             if (results.length >= 2) {
                 debug('eventually send');
@@ -53,24 +51,25 @@ class HealthCheckAPI {
             }
         }
 
-        _willCheckCirrusHealth.call(this)
+        _willCheckCirrusHealth.call(self)
             .then(function (healthy) {
                 responseJSON['health.cirrus_users_client'].healthy = healthy;
-                eventually.call(this, healthy);
+                eventually.call(self, 'cirrus', healthy);
             });
 
-        _willCheckDictionarySetHealth.call(this)
+        _willCheckDictionarySetHealth.call(self)
             .then(function (healthy) {
+                debug('_willCheckDictionarySetHealth handle');
                 responseJSON['health.db_connection'].healthy = healthy;
                 if (healthy) {
-                    _willCheckDictionaryGetHealth.call(this)
+                    _willCheckDictionaryGetHealth.call(self)
                         .then(function (healthy) {
                             responseJSON['health.db_connection'].healthy = healthy;
-                            eventually.call(this, healthy);
+                            eventually.call(self, 'dbget', healthy);
                         });
                 }
                 else {
-                    eventually.call(this, healthy);
+                    eventually.call(self, 'dbset', healthy);
                 }
             });
 
@@ -87,52 +86,67 @@ _willCheckCirrusHealth = function () {
 };
 
 _willCheckDictionarySetHealth = function () {
-    return new Promise(function (fulfill) {
-        process.nextTick(function () {
-            debug('_willCheckDictionarySetHealth fulfill');
-            fulfill(Math.random() < 0.5);
+    const self = this,
+
+        promiseToSetDictionary = new Promise(function (fulfill, reject) {
+            self.dictionaryStore.willSet(
+                self.dictionaryTestData.name, self.dictionaryTestData.value)
+
+                .then(function (result) {
+                    debug('promiseToSetDictionary fulfill', result);
+                    fulfill(result);
+                })
+                .catch(function (reason) {
+                    debug('promiseToSetDictionary reject', reason);
+                    reject(reason);
+                });
+        }),
+
+        promiseToCheckResults = new Promise(function (fulfill) {
+            promiseToSetDictionary
+                .then(function (result) {
+                    debug('promiseToCheckResults set fulfill', result);
+                    const healthy = _checkResponse.call(
+                        self, result, self.dictionaryTestData.value);
+                    debug('promiseToCheckResults set fulfill', healthy);
+                    fulfill(healthy);
+                });
         });
-    });
+
+    return promiseToCheckResults;
 };
 
 _willCheckDictionaryGetHealth = function () {
-    return new Promise(function (fulfill) {
-        process.nextTick(function () {
-            debug('_willCheckDictionaryGetHealth fulfill');
-            fulfill(Math.random() < 0.5);
-        });
-    });
-};
+    const self = this,
 
-_willCheckDictionaryHealth1 = function (response, next) {
-    var self = this,
-        healthy = false;
-    self.dictionaryStore.willSet(self.dictionaryTestData.name,  self.dictionaryTestData.value)
-        .then(function (result) {
-            healthy = _checkResponse.call(self, result, self.dictionaryTestData.value);
-            if (healthy) {
-                self.dictionaryStore.willGet(
-                    self.dictionaryTestData.name,  self.dictionaryTestData.value)
-                    .then(function (result) {
-                        healthy = _checkResponse.call(
-                            self, result, self.dictionaryTestData.value);
-                        _sendResponse.call(self, healthy, response, next);
-                    })
-                    .catch(function () {
-                        _sendResponse.call(self, healthy, response, next);
-                    });
-            }
-            else {
-                _sendResponse.call(self, healthy, response, next);
-            }
-        })
-        .catch(function () {
-            _sendResponse.call(self, healthy, response, next);
+        promiseToGetDictionary = new Promise(function (fulfill, reject) {
+            self.dictionaryStore.willGet(self.dictionaryTestData.name)
+
+                .then(function (result) {
+                    debug('promiseToGetDictionary fulfill', result);
+                    fulfill(result);
+                })
+                .catch(function (reason) {
+                    debug('promiseToGetDictionary reject', reason);
+                    reject(reason);
+                });
+        }),
+
+        promiseToCheckResults = new Promise(function (fulfill) {
+            promiseToGetDictionary
+                .then(function (result) {
+                    debug('promiseToCheckResults get fulfill', result);
+                    const healthy = _checkResponse.call(
+                        self, result, self.dictionaryTestData.value);
+                    fulfill(healthy);
+                });
         });
+
+    return promiseToCheckResults;
 };
 
 _sendHealthResponse = function (response, json, next) {
-    var healthy = json['health.cirrus_users_client'].healthy &&
+    const healthy = json['health.cirrus_users_client'].healthy &&
         json['health.db_connection'].healthy;
     next = next || function () {};
     response.status(healthy ? 200 : 500);

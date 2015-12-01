@@ -3,7 +3,7 @@
 
 'use strict';
 
-var category = 'DictionaryAPI',
+const category = 'DictionaryAPI',
     logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category),
     DictionaryStore = require('./lib/DictionaryStore');
@@ -17,7 +17,7 @@ class DictionaryAPI {
         // MUSTDO ENSURE WE HAVE A DATABASE CONNECTION AT STARTUP
         // I GET NO ERROR IF DB DOESN'T EXIST
         // try google.com as hostname for example.
-        var initDatabaseConnectionOnStartup = new DictionaryStore({
+        const initDatabaseConnectionOnStartup = new DictionaryStore({
             scope: 'users',
             uuid: 'databaseinitialisation'
         });
@@ -37,7 +37,7 @@ class DictionaryAPI {
     }
 
     getCollection(request, response) {
-        var self = this,
+        const self = this,
             scope = request.params.scope,
             uuid = request.params.uuid,
             dictionaryFilters = request.query,
@@ -76,7 +76,7 @@ class DictionaryAPI {
 
     _handleNamedItem(name, method, request, response) {
 
-        var self = this,
+        const self = this,
             scope = request.params.scope,
             uuid = request.params.uuid,
             dictionaryName = request.params.dictionaryName,

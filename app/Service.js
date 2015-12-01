@@ -3,9 +3,8 @@
 const category = 'Service',
     baseUrl = '/dictionaries/api/v1.0',
     singleEntryUrl = baseUrl + '/:scope/:uuid/dictionaries/:dictionaryName.json',
-    allUrl = baseUrl + '/:scope/:uuid/dictionaries.json';
-
-var log = require('./lib/config-log4js'), // must be first to setup
+    allUrl = baseUrl + '/:scope/:uuid/dictionaries.json',
+    log = require('./lib/config-log4js'), // must be first to setup
     logger = log.getLogger(category),
     debug = require('debug')(category),
     path = require('path'),
@@ -17,8 +16,9 @@ var log = require('./lib/config-log4js'), // must be first to setup
     DictionaryAPI = require('./DictionaryAPI'),
     bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
-    privates = new WeakMap(),
-    _initAPI,
+    privates = new WeakMap();
+
+var _initAPI,
     _setPrivate;
 
 class Service {
@@ -34,7 +34,7 @@ class Service {
     }
 
     start (port) {
-        var app = express(),
+        const app = express(),
             _privates = privates.get(this),
             healthCheckAPI = _privates.healthCheckAPI,
             dictionaryAPI = _privates.dictionaryAPI,
@@ -83,7 +83,7 @@ class Service {
             dictionaryAPI.delete(request, response);
         });
 
-        var server = http.createServer(app);
+        const server = http.createServer(app);
         server.listen(port, function() {
             logger.info(process.pid + ' Service started on port ' + port);
         });
@@ -103,12 +103,12 @@ class Service {
 }
 
 _initAPI = function (name, APIClass) {
-    var api = this.apis[name] ? this.apis[name] : new APIClass();
+    const api = this.apis[name] ? this.apis[name] : new APIClass();
     _setPrivate.call(this, name, api);
 };
 
 _setPrivate = function (key, value) {
-    var _privates = privates.get(this);
+    const _privates = privates.get(this);
     _privates[key] = value;
     return this;
 };

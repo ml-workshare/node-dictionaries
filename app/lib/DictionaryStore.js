@@ -1,8 +1,7 @@
 'use strict';
 
-const category = 'DictionaryStore';
-
-var logger = require('./config-log4js').getLogger(category),
+const category = 'DictionaryStore',
+    logger = require('./config-log4js').getLogger(category),
     debug = require('debug')(category),
     getDb = require('./DictionaryDatabase'),
     MongoFiltersSanitizer = require('./MongoFiltersSanitizer');
@@ -18,20 +17,21 @@ class DictionaryStore {
 
     willSet(name, value) {
         debug('willSet()', name, value);
-        var uuid = this.uuid;
-        var dbPromise = this.db.get(this.scope)
-            .findAndModify(
-                { uuid, name },
-                { uuid, name, value },
-                { upsert: true }
-            );
+        const uuid = this.uuid,
+            dbPromise = this.db.get(this.scope)
+                .findAndModify(
+                    { uuid, name },
+                    { uuid, name, value },
+                    { upsert: true }
+                );
+
         return this._willHandleDocument(dbPromise, name);
     }
 
     willDelete(name) {
         debug('willDelete()', name);
-        var uuid = this.uuid,
-            self = this;
+        const self = this,
+            uuid = this.uuid;
         return new Promise((fulfill, reject) => {
             self.willGet(name).then((document) => {
                 debug('willDelete(), deleting documents: ', document);
@@ -45,16 +45,18 @@ class DictionaryStore {
 
     willGet(name) {
         debug('willGet()', name);
-        var uuid = this.uuid;
-        var dbPromise = this.db.get(this.scope).findOne({ uuid, name });
+        const uuid = this.uuid,
+            dbPromise = this.db.get(this.scope).findOne({ uuid, name });
+
         return this._willHandleDocument(dbPromise, name);
     }
 
     willGetCollection(filters) {
         debug('willGetCollection()', filters);
-        var self = this;
-        var mongoFilters = this.sanitizer.sanitize(filters);
+        const self = this,
+            mongoFilters = this.sanitizer.sanitize(filters);
         mongoFilters.uuid = this.uuid;
+
         return new Promise((fulfill, reject) => {
             self.db.get(self.scope).find(mongoFilters).then((documents) => {
                 fulfill(documents.map((document) => {
@@ -68,7 +70,7 @@ class DictionaryStore {
 
     _willHandleDocument(promise, name) {
         debug('_willHandleDocument() for name: ', name);
-        var self = this;
+        const self = this;
         return new Promise((fulfill, reject) => {
             promise.then((document) => {
                 debug('_willHandleDocument(), got document: ', document);
@@ -83,7 +85,7 @@ class DictionaryStore {
     _handleDocument(document, name) {
         debug('_handleDocument(): ', document, name);
         if (document) {
-            var result = document.value;
+            const result = document.value;
             result.name = name || document.name;
             return result;
         } else {

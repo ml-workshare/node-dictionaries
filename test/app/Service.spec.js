@@ -2,15 +2,16 @@
 
 describe('Service', function() {
 
-    var HealthCheckAPI = require('../../app/HealthCheckAPI'),
+    const HealthCheckAPI = require('../../app/HealthCheckAPI'),
         DictionaryAPI = require('../../app/DictionaryAPI'),
         VersionAPI = require('../../app/VersionAPI'),
         Service = require('../../app/Service'),
         debug = require('debug')('tests'),
         supertest = require('supertest'),
         _ = require('underscore'),
-        showLoggingWhileTesting = 'off',
-        testHelper;
+        showLoggingWhileTesting = 'off';
+
+    var testHelper;
 
     before(function () {
         _.extend(this, testHelper);
@@ -21,7 +22,7 @@ describe('Service', function() {
     });
 
     it('should construct with no parameters' , function() {
-        var service = new Service();
+        const service = new Service();
 
         // experiment with debugging options
         if (false) {
@@ -30,7 +31,7 @@ describe('Service', function() {
             debug('debug', service);
             console.error(service);
             console.error('console.error', service);
-            var util = require('util'),
+            const util = require('util'),
                 showHidden = true,
                 depth = 3,//null for all
                 colorize = true;
@@ -132,7 +133,7 @@ describe('Service', function() {
         setup: function (apiName, Api, method) {
             setLogging(showLoggingWhileTesting);
 
-            var options = {},
+            const options = {},
                 anAPI = new Api();
 
             this.routeHandler = this.createStub(anAPI, method);
@@ -154,7 +155,7 @@ describe('Service', function() {
         },
 
         expectRouteIsConnected: function (method, url, asyncDone) {
-            var self = this;
+            const self = this;
 
             supertest(self.app)
                 [method](url)

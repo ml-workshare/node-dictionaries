@@ -1,11 +1,12 @@
 'use strict';
 
-var HealthCheckAPI = require('../../app/HealthCheckAPI'),
+const HealthCheckAPI = require('../../app/HealthCheckAPI'),
     DictionaryStore = require('../../app/lib/DictionaryStore'),
     mockHttp = require('node-mocks-http'),
     config = require('config'),
-    _ = require('underscore'),
-    testHelper;
+    _ = require('underscore');
+
+var testHelper;
 
 describe('HealthCheckAPI', function () {
 
@@ -53,7 +54,7 @@ describe('HealthCheckAPI', function () {
 
         it('should have response status 200 on successful healthcheck', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockSuccessLookup();
 
             self.testHealthCheck(asyncDone,
@@ -65,7 +66,7 @@ describe('HealthCheckAPI', function () {
 
         it.skip('should have healthy = true on successful healthcheck', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockSuccessLookup();
 
             self.testHealthCheck(asyncDone,
@@ -86,7 +87,7 @@ describe('HealthCheckAPI', function () {
         it('should have response status 500 on ' +
             'unsuccessful healthcheck dictionary get fails', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockFailedLookupGet();
 
             self.testHealthCheck(asyncDone,
@@ -98,7 +99,7 @@ describe('HealthCheckAPI', function () {
         it('should have response status 500 on ' +
             'unsuccessful healthcheck dictionary set fails', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockFailedLookupSet();
 
             self.testHealthCheck(asyncDone,
@@ -110,7 +111,7 @@ describe('HealthCheckAPI', function () {
         it.skip('should have response status 500 on ' +
             'unsuccessful cirrus lookup', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockSuccessDictionaryLookup();
 
             self.testHealthCheck(asyncDone,
@@ -121,7 +122,7 @@ describe('HealthCheckAPI', function () {
 
         it('should have healthy = false on unsuccessful cirrus healthcheck', function (asyncDone) {
 
-            var self = this;
+            const self = this;
             self.mockSuccessDictionaryLookup();
 
             self.testHealthCheck(asyncDone,
@@ -143,13 +144,13 @@ describe('HealthCheckAPI', function () {
     describe.skip('Full Coverage', function() {
 
         it('should construct with its own location finder instance', function () {
-            var healthCheck = new HealthCheckAPI();
+            const healthCheck = new HealthCheckAPI();
 
             expect(healthCheck.locationFinder).to.not.be.null;
         });
 
         it('should catch error and call through to next handler', function (asyncDone) {
-            var locationFinder = {
+            const locationFinder = {
                     willLookup: function () {
                         return new Promise(function (fulfill, reject) {
                             void fulfill;
@@ -176,7 +177,7 @@ describe('HealthCheckAPI', function () {
 testHelper = {
 
     testHealthCheck: function (asyncDone, fnTest) {
-        var self = this;
+        const self = this;
         self.request = mockHttp.createRequest({
             method: 'GET',
             url: '/fake'

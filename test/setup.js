@@ -22,7 +22,7 @@ process.env.LOG4JS_CONFIG = '';
 
 function _checkLogDir ()
 {
-    var path = require('path'),
+    const path = require('path'),
         dir = path.resolve(process.cwd(), 'log'),
         fs = require('fs');
 
@@ -30,7 +30,7 @@ function _checkLogDir ()
     {
         if (error)
         {
-            var msg = 'Test plan LOG directory must exist with' +
+            const msg = 'Test plan LOG directory must exist with' +
                 ' write permissions. Please create ' +
                 dir + ' ' + error;
             console.trace(msg);
@@ -41,7 +41,7 @@ function _checkLogDir ()
 
 _checkLogDir();
 
-var config = require('config'),
+const config = require('config'),
     log = require('../app/lib/config-log4js');
 
 global.chai = require('chai');
@@ -71,7 +71,7 @@ global.testAsync = function (asyncDone, thrower) {
     }
 };
 
-var sinonChai = require('sinon-chai');
+const sinonChai = require('sinon-chai');
 global.chai.use(sinonChai);
 require('sinon-as-promised');
 

@@ -1,7 +1,8 @@
 'use strict';
+//const debug = require('debug')('test');
 
 describe('DictionaryStore', function () {
-    var DictionaryStore = require('../../../app/lib/DictionaryStore'),
+    const DictionaryStore = require('../../../app/lib/DictionaryStore'),
         uuid = 'potato-chimichanga',
         accountsCollection = {},
         usersCollection = {
@@ -20,6 +21,7 @@ describe('DictionaryStore', function () {
             }
         };
 
+
     beforeEach(function () {
         this.dictionary = new DictionaryStore({
             scope: 'users',
@@ -36,7 +38,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGet', function () {
-        var document = {
+        const document = {
             name: 'potato',
             uuid: uuid,
             value: { a: 'value' },
@@ -60,7 +62,7 @@ describe('DictionaryStore', function () {
         it('should act as a promise and return the value', function (done) {
             usersCollection.findOne.resolves(document);
 
-            var expectedResult = { name: 'potato', a: 'value' };
+            const expectedResult = { name: 'potato', a: 'value' };
 
             this.dictionary.willGet('potato').then((doc) => {
                 testAsync(done, () => {
@@ -71,7 +73,7 @@ describe('DictionaryStore', function () {
 
         it('should reject promise when mongo fails to retrieve a result', function (done) {
 
-            var errorMessage = 'errorMessage';
+            const errorMessage = 'errorMessage';
 
             usersCollection.findOne.rejects(errorMessage);
 
@@ -87,7 +89,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willSet', function () {
-        var name = 'potato',
+        const name = 'potato',
             value = { a: 'value' },
             newValue = { another: 'value2' },
             document = {
@@ -98,7 +100,7 @@ describe('DictionaryStore', function () {
             };
 
         it('should pass the correct parameters to usersCollection', function (done) {
-            var query = { uuid, name },
+            const query = { uuid, name },
                 insert = { uuid, name, value };
 
             usersCollection.findAndModify.resolves(document);
@@ -114,7 +116,7 @@ describe('DictionaryStore', function () {
         it('should act as a promise and return the value', function (done) {
             usersCollection.findAndModify.resolves(document);
 
-            var expectedResult = { name: name, another: 'value2' };
+            const expectedResult = { name: name, another: 'value2' };
 
             this.dictionary.willSet(name, newValue).then((doc) => {
                 testAsync(done, () => {
@@ -125,7 +127,7 @@ describe('DictionaryStore', function () {
 
         it('should reject promise when mongo fails to retrieve a result', function (done) {
 
-            var errorMessage = 'errorMessage';
+            const errorMessage = 'errorMessage';
 
             usersCollection.findAndModify.rejects(errorMessage);
 
@@ -141,7 +143,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection', function () {
-        var name = 'potato',
+        const name = 'potato',
             secondName = 'potato2',
             documents = [{
                 name: name,
@@ -156,7 +158,7 @@ describe('DictionaryStore', function () {
             }];
 
         it('should pass the correct parameters to usersCollection', function (done) {
-            var query = { uuid };
+            const query = { uuid };
 
             usersCollection.find.resolves(documents);
 
@@ -171,7 +173,7 @@ describe('DictionaryStore', function () {
         it('should act as a promise and return the value', function (done) {
             usersCollection.find.resolves(documents);
 
-            var expectedResult = [
+            const expectedResult = [
                 { name: name, a: 'value' },
                 { name: secondName, another: 'value2' }
             ];
@@ -185,7 +187,7 @@ describe('DictionaryStore', function () {
 
         it('should reject promise when mongo fails to retrieve a result', function (done) {
 
-            var errorMessage = 'errorMessage';
+            const errorMessage = 'errorMessage';
 
             usersCollection.find.rejects(errorMessage);
 
@@ -201,7 +203,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection (filtered)', function () {
-        var name = 'potato',
+        const name = 'potato',
             filters = { a: 'value' },
             sanitizedFilters = { uuid: uuid, 'value.a': 'value' },
             documents = [{
@@ -224,7 +226,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection (filtered for int)', function () {
-        var name = 'potato',
+        const name = 'potato',
             filters = { a: '42' },
             sanitizedFilters = { uuid: uuid, 'value.a': { '$in': [ 42, '42' ] } },
             documents = [{
@@ -247,7 +249,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection (filtered for float)', function () {
-        var name = 'potato',
+        const name = 'potato',
             filters = { a: '42.42' },
             sanitizedFilters = { uuid: uuid, 'value.a': { '$in': [ 42.42, '42.42'] } },
             documents = [{
@@ -270,7 +272,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection (filtered for true)', function () {
-        var name = 'potato',
+        const name = 'potato',
             filters = { a: 'true' },
             sanitizedFilters = { uuid: uuid, 'value.a': { '$in': [ true, 'true' ] } },
             documents = [{
@@ -293,7 +295,7 @@ describe('DictionaryStore', function () {
     });
 
     describe('willGetCollection (filtered for false)', function () {
-        var name = 'potato',
+        const name = 'potato',
             filters = { a: 'false' },
             sanitizedFilters = { uuid: uuid, 'value.a': { '$in': [ false, 'false' ] } },
             documents = [{

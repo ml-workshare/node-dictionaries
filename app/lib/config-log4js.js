@@ -11,12 +11,12 @@
 
 'use strict';
 
-const category = 'config:log4js';
-
-var config,
+const category = 'config:log4js',
     log4js = require('log4js'),
     debug = require('debug')(category),
-    mkdirp = require('mkdirp'),
+    mkdirp = require('mkdirp');
+
+var config,
     _configureFromFile,
     _debugConfig;
 
@@ -37,7 +37,7 @@ log4js._configureFromConfig = function () {
     _debugConfig(config);
     debug('_configureFromConfig()', config);
     if (config.has('log4js')) {
-        var log4jsConfig = config.get('log4js');
+        const log4jsConfig = config.get('log4js');
         if (log4jsConfig.has('configureFile')) {
             _configureFromFile(log4jsConfig);
         }
@@ -49,9 +49,10 @@ log4js._configureFromConfig = function () {
 };
 
 _configureFromFile = function (log4config) {
-    var configFromFile = log4config.get('configureFile');
-    var fileName = configFromFile.get('fileName');
-    var options = configFromFile.has('options') ? configFromFile.get('options') : {};
+    const configFromFile = log4config.get('configureFile'),
+        fileName = configFromFile.get('fileName'),
+        options = configFromFile.has('options') ? configFromFile.get('options') : {};
+
     var logDir;
 
     if (options.has && options.has('cwd')) {

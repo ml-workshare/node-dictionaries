@@ -1,9 +1,9 @@
 'use strict';
 
-var VersionAPI = require('../../app/VersionAPI');
+const VersionAPI = require('../../app/VersionAPI');
 
 describe('VersionAPI', function() {
-    var GOOD_PACKAGE = {
+    const GOOD_PACKAGE = {
             version: 'fake-version'
         },
         GOOD_VERSION = {
@@ -73,7 +73,7 @@ describe('VersionAPI', function() {
 
     describe('get', function() {
         beforeEach(function() {
-            var self = this,
+            const self = this,
                 chain = function () { return self.response; };
             this.request = { params: {} };
             this.response = {

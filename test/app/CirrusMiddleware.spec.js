@@ -1,10 +1,11 @@
 'use strict';
 
 describe('CirrusMiddleware', function () {
-    var CirrusMiddleware = require('../../app/CirrusMiddleware'),
+    const CirrusMiddleware = require('../../app/CirrusMiddleware'),
         mockHttp = require('node-mocks-http'),
-        _ = require('underscore'),
-        testHelper;
+        _ = require('underscore');
+
+    var testHelper;
 
     before(function () {
         _.extend(this, testHelper);
@@ -17,7 +18,7 @@ describe('CirrusMiddleware', function () {
 
     describe('addsCurrentUuid', function () {
         it('should add UUID to the request for next handler', function (asyncDone) {
-            var self = this;
+            const self = this;
 
             this.testCirrusMiddleware(asyncDone, function () {
                 expect(self.request.currentUuid).to.be.equal('uUiD.UuId.uUiD.UuId');
@@ -27,7 +28,7 @@ describe('CirrusMiddleware', function () {
 
     testHelper = {
         testCirrusMiddleware: function (asyncDone, fnTest) {
-            var self = this;
+            const self = this;
             self.request = mockHttp.createRequest({
                 method: 'GET',
                 url: '/fake'

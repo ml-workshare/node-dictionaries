@@ -2,12 +2,12 @@
 
 const category = 'VersionAPI',
     versionPath = '../config/version.json',
-    packagePath = '../package.json';
-
-var logger = require('./lib/config-log4js').getLogger(category),
+    packagePath = '../package.json',
+    logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category),
-    privates = new WeakMap(),
-    _getPackageJSON,
+    privates = new WeakMap();
+
+var _getPackageJSON,
     _getVersionJSON,
     _getJSON,
     _prepareVersion,
@@ -46,7 +46,7 @@ class VersionAPI {
     }
 
     toDebugString () {
-        var util = require('util');
+        const util = require('util');
         return category + ' ' + util.inspect(privates.get(this), true, null, true);
     }
 
@@ -56,7 +56,7 @@ class VersionAPI {
 }
 
 _setPrivate = function (key, value) {
-    var _privates = privates.get(this);
+    const _privates = privates.get(this);
     _privates[key] = value;
     return this;
 };
@@ -81,16 +81,17 @@ _getVersionJSON = function (mockVersion) {
 };
 
 _getJSON = function (pathOrObject, defaultPath) {
-    var path = (typeof pathOrObject === 'string') ? pathOrObject : defaultPath;
+    const path = (typeof pathOrObject === 'string') ? pathOrObject : defaultPath;
     return typeof pathOrObject === 'object' ?
         pathOrObject : require(path);
 };
 
 _prepareVersion = function () {
-    var status,
-        result = {},
-        packageJSON = privates.get(this).packageJSON,
-        versionJSON = privates.get(this).versionJSON;
+    const packageJSON = privates.get(this).packageJSON,
+        versionJSON = privates.get(this).versionJSON,
+        result = {};
+
+    var status;
 
     if (packageJSON && packageJSON.version) {
         status = 200;
@@ -111,7 +112,7 @@ _prepareVersion = function () {
 };
 
 _formatResponse = function (keyValues) {
-    var result = [];
+    const result = [];
     Object.keys(keyValues).forEach(function (key) {
         result.push(key + '=' + keyValues[key]);
     });

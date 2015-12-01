@@ -2,9 +2,8 @@
 
 'use strict';
 
-const category = 'CirrusMiddleware';
-
-var logger = require('./lib/config-log4js').getLogger(category),
+const category = 'CirrusMiddleware',
+    logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category);
 
 class CirrusMiddleware {

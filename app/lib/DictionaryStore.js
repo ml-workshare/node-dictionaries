@@ -29,18 +29,30 @@ class DictionaryStore {
     }
 
     willDelete(name) {
+
         debug('willDelete()', name);
+
         const self = this,
             uuid = this.uuid;
+
         return new Promise((fulfill, reject) => {
+
             self.willGet(name).then((document) => {
+
                 debug('willDelete(), deleting documents: ', document);
-                self.db.get(self.scope).remove({ uuid, name });
-                fulfill(document);
+
+                self.db.get(self.scope).remove({ uuid, name }).then(() => {
+                    fulfill(document);
+                }, (error) => {
+                    reject(self.getErrorSync(error));
+                });
+
             }, (error) => {
-                reject(self.getErrorSync(error));
+                reject(error);
             });
+
         });
+
     }
 
     willGet(name) {

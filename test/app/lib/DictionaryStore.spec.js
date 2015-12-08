@@ -7,7 +7,8 @@ describe('DictionaryStore', function () {
         usersCollection = {
             find: sinon.stub(),
             findOne: sinon.stub(),
-            findAndModify: sinon.stub()
+            findAndModify: sinon.stub(),
+            remove: sinon.stub()
         },
         db = {
             get: function (scope) {
@@ -295,4 +296,83 @@ describe('DictionaryStore', function () {
             });
         });
     });
+
+    describe('willDelete', function () {
+
+        var name = 'potato',
+            value = { a: 'value' },
+            document = {
+                name: name,
+                uuid: uuid,
+                value: value,
+                _id: '5642217cf9abdbd528bc1448'
+            },
+            expectedResult = {
+                name: 'potato',
+                a: 'value'
+            };
+
+        it('should return null if the value to be deleted is not found', function () {
+
+            usersCollection.findOne.resolves(null);
+            usersCollection.remove.resolves(null);
+
+            return this.dictionary.willDelete(name).then((result) => {
+
+                expect(result).to.deep.equal(null);
+
+            });
+
+        });
+
+        it('should return the deleted value if value to be deleted is found', function () {
+
+            usersCollection.findOne.resolves(document);
+            usersCollection.remove.resolves(document);
+
+            return this.dictionary.willDelete(name).then((result) => {
+
+                expect(result).to.deep.equal(expectedResult);
+
+            });
+
+        });
+
+        it('should reject when mongo fails to retrieve the value to be deleted', function (done) {
+
+            var errorMessage = 'errorMessage';
+
+            usersCollection.findOne.rejects(errorMessage);
+
+            this.dictionary.willDelete('potato').then(() => {
+                done(new Error('Fulfilled when should have failed'));
+            }).catch(function (error) {
+                testAsync(done, () => {
+                    expect(error.error_code).to.be.equal('die');
+                    expect(error.error_msg.message).to.be.equal(errorMessage);
+                });
+            });
+
+        });
+
+        it('should reject when mongo fails to delete the value', function (done) {
+
+            var errorMessage = 'errorMessage';
+
+            usersCollection.findOne.resolves(document);
+            usersCollection.remove.rejects(errorMessage);
+
+            this.dictionary.willDelete('potato').then(() => {
+                done(new Error('Fulfilled when should have failed'));
+            }).catch(function (error) {
+                testAsync(done, () => {
+                    expect(error.error_code).to.be.equal('die');
+                    expect(error.error_msg.message).to.be.equal(errorMessage);
+                });
+            });
+
+        });
+
+    });
+
 });

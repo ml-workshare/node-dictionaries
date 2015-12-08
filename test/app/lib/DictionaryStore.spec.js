@@ -1,5 +1,4 @@
 'use strict';
-//const debug = require('debug')('test');
 
 describe('DictionaryStore', function () {
     const DictionaryStore = require('../../../app/lib/DictionaryStore'),
@@ -45,46 +44,44 @@ describe('DictionaryStore', function () {
             _id: '5642217cf9abdbd528bc1448'
         };
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.findOne.resolves(document);
 
-            this.dictionary.willGet('potato').then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.findOne).to.
-                        have.been.calledWith({
-                            uuid: uuid,
-                            name: 'potato'
-                        });
-                });
-            }, done);
+            return this.dictionary.willGet('potato').then(() => {
+                expect(usersCollection.findOne).to.
+                    have.been.calledWith({
+                        uuid: uuid,
+                        name: 'potato'
+                    });
+            });
         });
 
-        it('should act as a promise and return the value', function (done) {
+        it('should act as a promise and return the value', function () {
             usersCollection.findOne.resolves(document);
 
             const expectedResult = { name: 'potato', a: 'value' };
 
-            this.dictionary.willGet('potato').then((doc) => {
-                testAsync(done, () => {
-                    expect(doc).to.deep.equal(expectedResult);
-                });
-            }, done);
+            return this.dictionary.willGet('potato').then((doc) => {
+                expect(doc).to.deep.equal(expectedResult);
+            });
         });
 
-        it('should reject promise when mongo fails to retrieve a result', function (done) {
-
+        it('should reject promise when mongo fails to retrieve a result', function () {
             const errorMessage = 'errorMessage';
+            var rejected = false;
 
             usersCollection.findOne.rejects(errorMessage);
 
-            this.dictionary.willGet('potato').then(() => {
-                    done(new Error('Fulfilled when should have failed'));
-                }).catch(function (error) {
-                    testAsync(done, () => {
-                        expect(error.error_code).to.be.equal('die');
-                        expect(error.error_msg.message).to.be.equal(errorMessage);
-                    });
-                });
+            return this.dictionary.willGet('potato').catch((error) => {
+                rejected = true;
+                expect(error.error_code).to.be.equal('die');
+                expect(error.error_msg.message).to.be.equal(errorMessage);
+            }).then(() => {
+                /* jshint maxcomplexity: 2 */
+                if (!rejected) {
+                    throw new Error('Fulfilled when should have failed');
+                }
+            });
         });
     });
 
@@ -99,30 +96,26 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             };
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             const query = { uuid, name },
                 insert = { uuid, name, value };
 
             usersCollection.findAndModify.resolves(document);
 
-            this.dictionary.willSet(name, value).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.findAndModify).to.
-                        have.been.calledWith(query, insert, { upsert: true });
-                });
-            }, done);
+            return this.dictionary.willSet(name, value).then(() => {
+                expect(usersCollection.findAndModify).to.
+                    have.been.calledWith(query, insert, { upsert: true });
+            });
         });
 
-        it('should act as a promise and return the value', function (done) {
+        it('should act as a promise and return the value', function () {
             usersCollection.findAndModify.resolves(document);
 
             const expectedResult = { name: name, another: 'value2' };
 
-            this.dictionary.willSet(name, newValue).then((doc) => {
-                testAsync(done, () => {
-                    expect(doc).to.deep.equal(expectedResult);
-                });
-            }, done);
+            return this.dictionary.willSet(name, newValue).then((doc) => {
+                expect(doc).to.deep.equal(expectedResult);
+            });
         });
 
         it('should reject promise when mongo fails to retrieve a result', function (done) {

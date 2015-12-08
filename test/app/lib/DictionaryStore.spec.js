@@ -150,20 +150,18 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc144a'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             const query = { uuid };
 
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection().then(() => {
-                testAsync(done, () => {
+            return this.dictionary.willGetCollection().then(() => {
                     expect(usersCollection.find).to.
                         have.been.calledWith(query);
-                });
-            }, done);
+            });
         });
 
-        it('should act as a promise and return the value', function (done) {
+        it('should act as a promise and return the value', function () {
             usersCollection.find.resolves(documents);
 
             const expectedResult = [
@@ -171,11 +169,9 @@ describe('DictionaryStore', function () {
                 { name: secondName, another: 'value2' }
             ];
 
-            this.dictionary.willGetCollection().then((docs) => {
-                testAsync(done, () => {
-                    expect(docs).to.deep.equal(expectedResult);
-                });
-            }, done);
+            return this.dictionary.willGetCollection().then((docs) => {
+                expect(docs).to.deep.equal(expectedResult);
+            });
         });
 
         it('should reject promise when mongo fails to retrieve a result', function (done) {
@@ -206,15 +202,13 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection(filters).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.find).to.
-                        have.been.calledWith(sanitizedFilters);
-                });
-            }, done);
+            return this.dictionary.willGetCollection(filters).then(() => {
+                expect(usersCollection.find).to.
+                    have.been.calledWith(sanitizedFilters);
+            });
         });
     });
 
@@ -229,15 +223,13 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection(filters).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.find).to.
-                        have.been.calledWith(sanitizedFilters);
-                });
-            }, done);
+            return this.dictionary.willGetCollection(filters).then(() => {
+                expect(usersCollection.find).to.
+                    have.been.calledWith(sanitizedFilters);
+            });
         });
     });
 
@@ -252,15 +244,13 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection(filters).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.find).to.
-                        have.been.calledWith(sanitizedFilters);
-                });
-            }, done);
+            return this.dictionary.willGetCollection(filters).then(() => {
+                expect(usersCollection.find).to.
+                    have.been.calledWith(sanitizedFilters);
+            });
         });
     });
 
@@ -275,15 +265,13 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection(filters).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.find).to.
-                        have.been.calledWith(sanitizedFilters);
-                });
-            }, done);
+            return this.dictionary.willGetCollection(filters).then(() => {
+                expect(usersCollection.find).to.
+                    have.been.calledWith(sanitizedFilters);
+            });
         });
     });
 
@@ -298,15 +286,13 @@ describe('DictionaryStore', function () {
                 _id: '5642217cf9abdbd528bc1448'
             }];
 
-        it('should pass the correct parameters to usersCollection', function (done) {
+        it('should pass the correct parameters to usersCollection', function () {
             usersCollection.find.resolves(documents);
 
-            this.dictionary.willGetCollection(filters).then(() => {
-                testAsync(done, () => {
-                    expect(usersCollection.find).to.
-                        have.been.calledWith(sanitizedFilters);
-                });
-            }, done);
+            return this.dictionary.willGetCollection(filters).then(() => {
+                expect(usersCollection.find).to.
+                    have.been.calledWith(sanitizedFilters);
+            });
         });
     });
 });

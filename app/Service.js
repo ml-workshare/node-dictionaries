@@ -42,7 +42,9 @@ class Service {
             dictionaryAPI = _privates.dictionaryAPI,
             dictionaryMiddleware = _privates.dictionaryMiddleware,
             versionAPI = _privates.versionAPI,
-            swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
+            swaggerDir = path.resolve(process.cwd(), 'swagger-ui'),
+            addsDictionaryStore = dictionaryMiddleware.addsDictionaryStore
+                .bind(dictionaryMiddleware);
 
         debug('start()', port);
 
@@ -70,22 +72,22 @@ class Service {
             versionAPI.get(request, response);
         });
 
-        app.get(allUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
+        app.get(allUrl, addsDictionaryStore,
             function(request, response) {
                 dictionaryAPI.getCollection(request, response);
         });
 
-        app.get(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
+        app.get(singleEntryUrl, addsDictionaryStore,
             function(request, response) {
                 dictionaryAPI.get(request, response);
         });
 
-        app.put(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
+        app.put(singleEntryUrl, addsDictionaryStore,
             function(request, response) {
                 dictionaryAPI.put(request, response);
         });
 
-        app.delete(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
+        app.delete(singleEntryUrl, addsDictionaryStore,
             function(request, response) {
                 dictionaryAPI.delete(request, response);
         });

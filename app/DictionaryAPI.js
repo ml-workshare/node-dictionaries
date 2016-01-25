@@ -5,39 +5,39 @@
 
 const category = 'DictionaryAPI',
     logger = require('./lib/config-log4js').getLogger(category),
-    debug = require('debug')(category),
-    dictionaryStoreFactory = require('./lib/DictionaryStore');
+    debug = require('debug')(category);
 
 debug('logger', logger);
 
 class DictionaryAPI {
 
     get(request, response) {
-        this._handleNamedItem('get', 'willGet', request, response);
+        return this._handleNamedItem('get', 'willGet', request, response);
     }
 
     put(request, response) {
-        this._handleNamedItem('put', 'willSet', request, response);
+        return this._handleNamedItem('put', 'willSet', request, response);
     }
 
     delete(request, response) {
-        this._handleNamedItem('delete', 'willDelete', request, response);
+        return this._handleNamedItem('delete', 'willDelete', request, response);
     }
 
     getCollection(request, response) {
         const self = this,
-            dictionaryFilters = request.query,
+            reqQuery = request.query,
+            filters = reqQuery.filters,
             dictionaryStore = request.dictionaryStore,
-            query = [dictionaryStore.scope, dictionaryStore.uuid,
-                JSON.stringify(dictionaryFilters)].join('/');
+            scope = dictionaryStore.scope,
+            uuid = dictionaryStore.uuid,
+            query = [scope, uuid, JSON.stringify(filters)].join('/');
 
-        debug('get', query);
-        dictionaryStore.willGetCollection(dictionaryFilters.filters)
+        debug('getCollection', query);
+        return dictionaryStore.willGetCollection(filters)
             .then(function (result) {
                 try {
                     logger.info('OK get: ' + query);
-                    response.status(200)
-                        .json(result);
+                    response.json(result);
                 }
                 catch (error)
                 {
@@ -61,23 +61,19 @@ class DictionaryAPI {
     _handleNamedItem(name, method, request, response) {
 
         const self = this,
-            scope = request.params.scope,
-            uuid = request.params.uuid,
+            dictionaryStore = request.dictionaryStore,
+            scope = dictionaryStore.scope,
+            uuid = dictionaryStore.uuid,
             dictionaryName = request.params.dictionaryName,
             dictionaryValue = request.body,
-            query = [scope, uuid, dictionaryName].join('/'),
-            dictionaryStore = dictionaryStoreFactory.create({
-                scope: scope,
-                uuid: uuid
-            });
+            query = [scope, uuid, dictionaryName].join('/');
 
         debug(name, query);
-        dictionaryStore[method](dictionaryName, dictionaryValue)
+        return dictionaryStore[method](dictionaryName, dictionaryValue)
             .then(function (result) {
                 try {
                     logger.info('OK ' + name + ': ' + query);
-                    response.status(200)
-                        .json(result);
+                    response.json(result);
                 }
                 catch (error)
                 {

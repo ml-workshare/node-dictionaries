@@ -27,8 +27,9 @@ class DictionaryAPI {
     getCollection(request, response) {
         const self = this,
             dictionaryFilters = request.query,
-            query = [scope, uuid, JSON.stringify(dictionaryFilters)].join('/'),
-            dictionaryStore = request.dictionaryStore;
+            dictionaryStore = request.dictionaryStore,
+            query = [dictionaryStore.scope, dictionaryStore.uuid,
+                JSON.stringify(dictionaryFilters)].join('/');
 
         debug('get', query);
         dictionaryStore.willGetCollection(dictionaryFilters.filters)

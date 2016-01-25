@@ -15,6 +15,7 @@ class DictionaryMiddleware {
     }
 
     addsDictionaryStore (request, response, next) {
+        void response;
         const scope = request.params.scope,
             uuid = request.params.uuid;
         logger.info(request.type + ' scope ' + scope + ' uuid ' + uuid);

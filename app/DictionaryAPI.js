@@ -26,14 +26,9 @@ class DictionaryAPI {
 
     getCollection(request, response) {
         const self = this,
-            scope = request.params.scope,
-            uuid = request.params.uuid,
             dictionaryFilters = request.query,
             query = [scope, uuid, JSON.stringify(dictionaryFilters)].join('/'),
-            dictionaryStore = dictionaryStoreFactory.create({
-                scope: scope,
-                uuid: uuid
-            });
+            dictionaryStore = request.dictionaryStore;
 
         debug('get', query);
         dictionaryStore.willGetCollection(dictionaryFilters.filters)

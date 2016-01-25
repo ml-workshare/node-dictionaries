@@ -17,14 +17,13 @@ class DictionaryMiddleware {
     addsDictionaryStore (request, response, next) {
         const scope = request.params.scope,
             uuid = request.params.uuid;
-
         logger.info(request.type + ' scope ' + scope + ' uuid ' + uuid);
 
         request.dictionaryStore = this.factory.create({
             scope: scope,
             uuid: uuid
         });
-        next(request, response);
+        next();
     }
 }
 

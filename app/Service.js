@@ -70,22 +70,22 @@ class Service {
             versionAPI.get(request, response);
         });
 
-        app.get(allUrl, dictionaryMiddleware.addsDictionaryStore,
+        app.get(allUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
             function(request, response) {
                 dictionaryAPI.getCollection(request, response);
         });
 
-        app.get(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+        app.get(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
             function(request, response) {
                 dictionaryAPI.get(request, response);
         });
 
-        app.put(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+        app.put(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
             function(request, response) {
                 dictionaryAPI.put(request, response);
         });
 
-        app.delete(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+        app.delete(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore.bind(dictionaryMiddleware),
             function(request, response) {
                 dictionaryAPI.delete(request, response);
         });

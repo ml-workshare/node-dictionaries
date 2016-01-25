@@ -6,23 +6,11 @@
 const category = 'DictionaryAPI',
     logger = require('./lib/config-log4js').getLogger(category),
     debug = require('debug')(category),
-    DictionaryStore = require('./lib/DictionaryStore');
+    dictionaryStoreFactory = require('./lib/DictionaryStore');
 
 debug('logger', logger);
 
 class DictionaryAPI {
-
-    constructor() {
-        debug('constructor');
-        // MUSTDO ENSURE WE HAVE A DATABASE CONNECTION AT STARTUP
-        // I GET NO ERROR IF DB DOESN'T EXIST
-        // try google.com as hostname for example.
-        const initDatabaseConnectionOnStartup = new DictionaryStore({
-            scope: 'users',
-            uuid: 'databaseinitialisation'
-        });
-        void initDatabaseConnectionOnStartup;
-    }
 
     get(request, response) {
         this._handleNamedItem('get', 'willGet', request, response);
@@ -42,7 +30,7 @@ class DictionaryAPI {
             uuid = request.params.uuid,
             dictionaryFilters = request.query,
             query = [scope, uuid, JSON.stringify(dictionaryFilters)].join('/'),
-            dictionaryStore = new DictionaryStore ({
+            dictionaryStore = dictionaryStoreFactory.create({
                 scope: scope,
                 uuid: uuid
             });
@@ -82,7 +70,7 @@ class DictionaryAPI {
             dictionaryName = request.params.dictionaryName,
             dictionaryValue = request.body,
             query = [scope, uuid, dictionaryName].join('/'),
-            dictionaryStore = new DictionaryStore ({
+            dictionaryStore = dictionaryStoreFactory.create({
                 scope: scope,
                 uuid: uuid
             });

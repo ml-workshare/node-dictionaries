@@ -1,8 +1,7 @@
 'use strict';
-//const debug = require('debug')('test');
 
 describe('DictionaryStore', function () {
-    const DictionaryStore = require('../../../app/lib/DictionaryStore'),
+    const dictionaryStoreFactory = require('../../../app/lib/DictionaryStore'),
         uuid = 'potato-chimichanga',
         accountsCollection = {},
         usersCollection = {
@@ -23,7 +22,7 @@ describe('DictionaryStore', function () {
 
 
     beforeEach(function () {
-        this.dictionary = new DictionaryStore({
+        this.dictionary = dictionaryStoreFactory.create({
             scope: 'users',
             uuid: uuid,
             database: db

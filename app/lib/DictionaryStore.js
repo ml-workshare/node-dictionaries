@@ -102,5 +102,12 @@ class DictionaryStore {
     }
 }
 
-module.exports = DictionaryStore;
+const DictionaryStoreFactory = {
+    create: function (options) {
+        return new DictionaryStore(options);
+    }
+};
+
+module.exports = DictionaryStoreFactory;
 debug('exports', module.exports);
+

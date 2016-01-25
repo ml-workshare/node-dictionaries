@@ -14,6 +14,7 @@ const category = 'Service',
     VersionAPI = require('./VersionAPI'),
     HealthCheckAPI = require('./HealthCheckAPI'),
     DictionaryAPI = require('./DictionaryAPI'),
+    DictionaryMiddleware = require('./DictionaryMiddleware'),
     bodyParser = require('body-parser'),
     swaggerUiMiddleware = require('swagger-ui-middleware'),
     privates = new WeakMap();
@@ -30,6 +31,7 @@ class Service {
         _initAPI.call(this, 'healthCheckAPI', HealthCheckAPI);
         _initAPI.call(this, 'versionAPI', VersionAPI);
         _initAPI.call(this, 'dictionaryAPI', DictionaryAPI);
+        _initAPI.call(this, 'dictionaryMiddleware', DictionaryMiddleware);
         delete this.apis;
     }
 
@@ -38,6 +40,7 @@ class Service {
             _privates = privates.get(this),
             healthCheckAPI = _privates.healthCheckAPI,
             dictionaryAPI = _privates.dictionaryAPI,
+            dictionaryMiddleware = _privates.dictionaryMiddleware,
             versionAPI = _privates.versionAPI,
             swaggerDir = path.resolve(process.cwd(), 'swagger-ui');
 
@@ -67,20 +70,24 @@ class Service {
             versionAPI.get(request, response);
         });
 
-        app.get(allUrl, function(request, response) {
-            dictionaryAPI.getCollection(request, response);
+        app.get(allUrl, dictionaryMiddleware.addsDictionaryStore,
+            function(request, response) {
+                dictionaryAPI.getCollection(request, response);
         });
 
-        app.get(singleEntryUrl, function(request, response) {
-            dictionaryAPI.get(request, response);
+        app.get(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+            function(request, response) {
+                dictionaryAPI.get(request, response);
         });
 
-        app.put(singleEntryUrl, function(request, response) {
-            dictionaryAPI.put(request, response);
+        app.put(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+            function(request, response) {
+                dictionaryAPI.put(request, response);
         });
 
-        app.delete(singleEntryUrl, function(request, response) {
-            dictionaryAPI.delete(request, response);
+        app.delete(singleEntryUrl, dictionaryMiddleware.addsDictionaryStore,
+            function(request, response) {
+                dictionaryAPI.delete(request, response);
         });
 
         const server = http.createServer(app);
@@ -114,3 +121,4 @@ _setPrivate = function (key, value) {
 };
 
 module.exports = Service;
+

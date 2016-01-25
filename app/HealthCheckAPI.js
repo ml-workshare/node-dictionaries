@@ -6,7 +6,7 @@ const category = 'HealthCheckAPI',
     logger = require('./lib/config-log4js').getLogger(category),
     config = require('config'),
     debug = require('debug')(category),
-    DictionaryStore = require('./lib/DictionaryStore'),
+    dictionaryStoreFactory = require('./lib/DictionaryStore'),
     defaults = {
         scope: 'users',
         uuid: 'Test.Test.Test.Test',
@@ -25,14 +25,18 @@ var _willCheckDictionarySetHealth,
 config.util.setModuleDefaults(category, defaults);
 
 class HealthCheckAPI {
-    constructor(dictionaryStore) {
-        const self = this;
+    constructor(mockDictionaryStoreFactory) {
+        const self = this,
+            factory = mockDictionaryStoreFactory || dictionaryStoreFactory;
         debug('constructor()');
         self.dictionaryTestData = {};
         Object.keys(defaults).forEach(function (key) {
             self.dictionaryTestData[key] = config.get(category + '.' + key);
         });
-        this.dictionaryStore = dictionaryStore || new DictionaryStore(this.dictionaryTestData);
+        self.dictionaryStore = factory.create({
+            scope: self.dictionaryTestData.scope,
+            uuid: self.dictionaryTestData.uuid
+        });
     }
 
     get(request, response, next) {

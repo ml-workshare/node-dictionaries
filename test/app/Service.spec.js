@@ -2,7 +2,8 @@
 
 describe('Service', function() {
 
-    const HealthCheckAPI = require('../../app/HealthCheckAPI'),
+    const mockDictionaryStore = require('./lib/mockDictionaryStore'),
+        HealthCheckAPI = require('../../app/HealthCheckAPI'),
         DictionaryAPI = require('../../app/DictionaryAPI'),
         VersionAPI = require('../../app/VersionAPI'),
         Service = require('../../app/Service'),
@@ -15,6 +16,7 @@ describe('Service', function() {
 
     before(function () {
         _.extend(this, testHelper);
+        _.extend(this, mockDictionaryStore);
     });
 
     afterEach(function() {
@@ -23,27 +25,7 @@ describe('Service', function() {
 
     it('should construct with no parameters' , function() {
         const service = new Service();
-
-        // experiment with debugging options
-        if (false) {
-            /* jshint maxcomplexity: 2 */
-            debug(service);
-            debug('debug', service);
-            console.error(service);
-            console.error('console.error', service);
-            const util = require('util'),
-                showHidden = true,
-                depth = 3,//null for all
-                colorize = true;
-            debug('util.inspect ' + util.inspect(service, showHidden, depth, colorize));
-            console.error('_privates', service._privates);
-            console.error('toString', service.toString());
-        }
-
-        // with privates, cannot check
-        //expect(service.healthCheckAPI).to.not.be.falsy;
-        //expect(service.versionAPI).to.not.be.falsy;
-        //expect(service.dictionaryAPI).to.not.be.falsy;
+        void service;
         expect(true).to.not.be.falsy;
     });
 
@@ -133,8 +115,12 @@ describe('Service', function() {
         setup: function (apiName, Api, method) {
             setLogging(showLoggingWhileTesting);
 
-            const options = {},
-                anAPI = new Api();
+            this.attachMockDictionaryMiddleware();
+
+            const anAPI = new Api(),
+                options = {
+                    dictionaryMiddleware: this.dictionaryMiddleware
+                };
 
             this.routeHandler = this.createStub(anAPI, method);
             options[apiName] = anAPI;
